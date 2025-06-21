@@ -12,6 +12,6 @@ describe("Basic startSiwf test", () => {
       "email@example.com",
       () => {},
     );
-    expect(resp).toBeDefined();
+    expect(resp).toMatchSnapshot();
   });
 });
