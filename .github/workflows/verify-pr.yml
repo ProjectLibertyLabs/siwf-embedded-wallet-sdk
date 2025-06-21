@@ -1,0 +1,46 @@
+name: Build and Test SDK
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-lib-sdk-web:
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm" # Enabling npm caching
+          cache-dependency-path: |
+            package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Pack
+        working-directory: dist
+        run: npm pack
+
+      - name: Upload Packed tgz
+        uses: actions/upload-artifact@v4
+        with:
+          name: Built Package
+          path: |
+            dist/projectlibertylabs-mock-siwf-embedded-wallet-0.0.0.tgz
+          retention-days: 4
