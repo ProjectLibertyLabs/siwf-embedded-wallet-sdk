@@ -41,9 +41,6 @@
     "vite": "^6.3.5",
     "vitest": "^3.2.4"
   },
-  "dependencies": {
-    "tweetnacl": "^1.0.3"
-  },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.44.0"
   }
