@@ -1,0 +1,248 @@
+x-common-environment: &common-environment
+  FREQUENCY_API_WS_URL: ${FREQUENCY_API_WS_URL}
+  SIWF_NODE_RPC_URL: ${SIWF_NODE_RPC_URL}
+  REDIS_URL: 'redis://redis:6379'
+  PROVIDER_ID: ${PROVIDER_ID}
+  PROVIDER_ACCOUNT_SEED_PHRASE: ${PROVIDER_ACCOUNT_SEED_PHRASE}
+  WEBHOOK_FAILURE_THRESHOLD: 3
+  WEBHOOK_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_MAX_RETRIES: 4
+  HEALTH_CHECK_MAX_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_SUCCESS_THRESHOLD: 10
+  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
+  SIWF_URL: 'https://projectlibertylabs.github.io/siwf/v1/ui'
+  SIWF_DOMAIN: 'localhost'
+  IPFS_ENDPOINT: ${IPFS_ENDPOINT}
+  IPFS_GATEWAY_URL: ${IPFS_GATEWAY_URL}
+  IPFS_BASIC_AUTH_USER: ${IPFS_BASIC_AUTH_USER}
+  IPFS_BASIC_AUTH_SECRET: ${IPFS_BASIC_AUTH_SECRET}
+  QUEUE_HIGH_WATER: 1000
+  CHAIN_ENVIRONMENT: dev
+  DEBUG: true
+
+x-content-publishing-env: &content-publishing-env
+  START_PROCESS: content-publishing-api
+  FILE_UPLOAD_MAX_SIZE_IN_BYTES: 500000000
+  FILE_UPLOAD_COUNT_LIMIT: 10
+  ASSET_EXPIRATION_INTERVAL_SECONDS: 300
+  BATCH_INTERVAL_SECONDS: 12
+  BATCH_MAX_COUNT: 1000
+  ASSET_UPLOAD_VERIFICATION_DELAY_SECONDS: 5
+  CACHE_KEY_PREFIX: 'content-publishing:'
+
+x-content-watcher-env: &content-watcher-env
+  STARTING_BLOCK: 759882
+  BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 6
+  WEBHOOK_FAILURE_THRESHOLD: 4
+  CACHE_KEY_PREFIX: 'content-watcher:'
+
+x-account-service-env: &account-service-env
+  SIWF_V2_URI_VALIDATION: 'localhost'
+  BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 1
+  TRUST_UNFINALIZED_BLOCKS: true
+  WEBHOOK_BASE_URL: 'http://siwf-embedded-wallet-sdk:3001/webhooks/account-service'
+  CACHE_KEY_PREFIX: 'account:'
+
+x-siwf-embedded-wallet-sdk: &siwf-embedded-wallet-sdk
+  ACCOUNT_SERVICE_URL: 'http://account-service-api:3000'
+  CONTENT_PUBLISHER_URL: 'http://content-publishing-service-api:3000'
+  CONTENT_WATCHER_URL: 'http://content-watcher-service:3000'
+  IPFS_UA_GATEWAY_URL: ${IPFS_UA_GATEWAY_URL}
+  NODE_ENV: development
+  WEBHOOK_BASE_URL: 'http://siwf-embedded-wallet-sdk:3001/webhooks'
+
+x-siwf-embedded-wallet-frontend: &siwf-embedded-wallet-frontend
+  REACT_APP_BACKEND_URL: 'http://localhost:${SERVICE_PORT_8}'
+  REACT_APP_TITLE: ${REACT_APP_TITLE}
+  REACT_APP_HEADER_BG_COLOR: ${REACT_APP_HEADER_BG_COLOR}
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - ${SERVICE_PORT_7}:6379
+    networks:
+      - social-app-backend
+    volumes:
+      - redis_data:/data
+
+  frequency:
+    image: frequencychain/standalone-node:latest
+    # We need to specify the platform because it's the only image
+    # built by Frequency at the moment, and auto-pull won't work otherwise
+    platform: linux/amd64
+    # Uncomment SEALING_MODE and SEALING_INTERVAL if you want to use interval sealing.
+    # Other options you may want to add depending on your test scenario.
+    environment:
+      - SEALING_MODE=interval
+      - SEALING_INTERVAL=1
+    #   - CREATE_EMPTY_BLOCKS=true
+    # The 'command' may contain additional CLI options to the Frequency node,
+    # such as:
+    # --state-pruning=archive
+    command: --offchain-worker=always --enable-offchain-indexing=true
+    healthcheck:
+      test: ["CMD", "bash", "-c", "curl -X POST -H \"Content-Type: application/json\" -d '{\"jsonrpc\":\"2.0\",\"method\":\"system_health\",\"params\":[],\"id\":1}' http://127.0.0.1:9944 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 9944:9944
+    networks:
+      - social-app-backend
+    volumes:
+      - chainstorage:/data
+    profiles:
+      - local-node
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - 4001:4001
+      - 127.0.0.1:5001:5001
+      - 127.0.0.1:8080:8080
+    networks:
+      - social-app-backend
+    volumes:
+      - ${IPFS_VOLUME:-ipfs_data}:/data/ipfs
+    profiles:
+      - ipfs
+    # labels:
+    #   - 'portical.upnp.forward=4401:4401'
+
+  content-publishing-service-api:
+    image: projectlibertylabs/content-publishing-service:${DOCKER_TAG:-latest}
+    pull_policy: always
+    ports:
+      - ${SERVICE_PORT_0}:3000
+    environment:
+      <<: [*common-environment, *content-publishing-env]
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+    profiles:
+      - content_publishing
+
+  content-publishing-service-worker:
+    image: projectlibertylabs/content-publishing-service:${DOCKER_TAG:-latest}
+    pull_policy: always
+    environment:
+      <<: [*common-environment, *content-publishing-env]
+      START_PROCESS: content-publishing-worker
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+    profiles:
+      - content_publishing
+
+  content-watcher-service:
+    image: projectlibertylabs/content-watcher-service:${DOCKER_TAG:-latest}
+    pull_policy: always
+    ports:
+      - ${SERVICE_PORT_1}:3000
+    environment:
+      <<: [*common-environment, *content-watcher-env]
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+    profiles:
+      - content_watcher
+
+  account-service-api:
+    image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
+    pull_policy: always
+    ports:
+      - ${SERVICE_PORT_3}:3000
+    command: account-api
+    environment:
+      <<: [*common-environment, *account-service-env]
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+    profiles:
+      - account
+
+  account-service-worker:
+    image: projectlibertylabs/account-service:${DOCKER_TAG:-latest}
+    pull_policy: always
+    command: account-worker
+    environment:
+      <<: [*common-environment, *account-service-env]
+    depends_on:
+      - redis
+    networks:
+      - social-app-backend
+    profiles:
+      - account
+
+  siwf-embedded-wallet-sdk:
+    pull_policy: never
+    image: social-app-backend
+    build:
+      context: ./
+      dockerfile: dev.Dockerfile
+      tags:
+        - social-app-backend:latest
+    ports:
+      - ${SERVICE_PORT_8}:3000
+      - ${SERVICE_PORT_9}:3001
+    environment:
+      <<: [*common-environment, *siwf-embedded-wallet-sdk]
+      IPFS_GATEWAY_URL: 'http://ipfs:8080'
+    volumes:
+      - :/app
+      - ${CONTENT_DB_VOLUME}:/app/db
+      - backend_node_cache:/app/node_modules
+    networks:
+      - social-app-backend
+    depends_on:
+      - content-publishing-service-api
+      - content-publishing-service-worker
+      - content-watcher-service
+      - account-service-api
+      - account-service-worker
+    profiles:
+      - backend
+
+  siwf-embedded-wallet-frontend:
+    pull_policy: never
+    image: siwf-embedded-wallet-frontend
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
+      tags:
+        - siwf-embedded-wallet-frontend:latest
+    ports:
+      - ${FRONTEND_PORT:-3000}:3000
+    environment:
+      <<: *siwf-embedded-wallet-frontend
+    volumes:
+      - ./frontend:/app
+      - frontend_node_cache:/app/node_modules
+    networks:
+      - social-app-backend
+    depends_on:
+      - content-publishing-service-api
+      - content-publishing-service-worker
+      - content-watcher-service
+      - account-service-api
+      - account-service-worker
+      - siwf-embedded-wallet-sdk
+    profiles:
+      - frontend
+
+volumes:
+  ipfs_data:
+  backend_node_cache:
+  frontend_node_cache:
+  redis_data:
+  content_db:
+  chainstorage:
+    external: false
+
+networks:
+  social-app-backend:

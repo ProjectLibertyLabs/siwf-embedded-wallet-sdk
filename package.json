@@ -14,9 +14,17 @@
     "test:quiet": "vitest run --silent",
     "format": "tsc -p ./tsconfig.eslint.json --noEmit --pretty && npm run prettier && npm run lint:fix",
     "prettier": "npx prettier --write src",
-    "lint": "tsc -p ./tsconfig.eslint.json --noEmit --pretty && npx eslint src",
+    "lint": "tsc -p y./tsconfig.eslint.json --noEmit --pretty && npx eslint src",
     "lint:fix": "npx eslint --fix src",
-    "lint:ci": "npx eslint src && npx prettier --check src"
+    "lint:ci": "npx eslint src && npx prettier --check src",
+    "start:dev": "set -a ; . ./.env.social-app-backend ; npx tsx --watch ./src/index.ts",
+    "container-run:dev": "npm install && npm run start:watch",
+    "docker-build": "docker build -t social-app-backend .",
+    "docker-build:dev": "docker-compose build",
+    "docker-run:dev": "docker-compose up -d ; docker-compose logs",
+    "docker-stop:dev": "docker-compose stop",
+    "local:init": "node scripts/local-init.cjs",
+    "env:init": "cp .env.social-app-backend .env"
   },
   "repository": {
     "type": "git",
