@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Release SDK
-run-name: Publish Mock SDK Release ${{github.ref_name}}
+run-name: Publish SDK Release ${{github.ref_name}}
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
   cancel-in-progress: false

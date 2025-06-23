@@ -43,5 +43,5 @@ jobs:
         with:
           name: Built Package
           path: |
-            dist/projectlibertylabs-mock-siwf-embedded-wallet-0.0.0.tgz
+            dist/projectlibertylabs-siwf-embedded-wallet-0.0.0.tgz
           retention-days: 4
