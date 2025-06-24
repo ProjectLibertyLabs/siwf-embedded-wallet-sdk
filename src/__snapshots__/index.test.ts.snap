@@ -2,7 +2,7 @@
 
 exports[`Basic startSiwf test > Can do a thing 1`] = `
 {
-  "controlKey": "f6cL4wq1HUNx11TcvdABNf9UNXXoyH47mVUwT59tzSFRW8yDH",
+  "controlKey": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
   "email": "user@example.com",
   "graphKey": {
     "encodedPrivateKeyValue": "0xd0910c853563723253c4ed105c08614fc8aaaf1b0871375520d72251496e8d87",

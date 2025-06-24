@@ -2,7 +2,7 @@ import { GatewaySiwfResponse } from "src/gateway-types.js";
 
 export function mockGatewayNewUserResponse(): GatewaySiwfResponse {
   return {
-    controlKey: "f6cL4wq1HUNx11TcvdABNf9UNXXoyH47mVUwT59tzSFRW8yDH",
+    controlKey: "f6d1YDa4agkaQ5Kqq8ZKwCf2Ew8UFz9ot2JNrBwHsFkhdtHEn",
     signUpReferenceId:
       "MjY3MjI3NWZlMGM0NTZmYjY3MWU0ZjQxN2ZiMmY5ODkyYzc1NzNiYQo",
     signUpStatus: "waiting",

@@ -1,0 +1,179 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Generate Mock Data > Generate the mocks for 712 Add Delegation 1`] = `
+{
+  "domain": {
+    "chainId": "0x190f1b44",
+    "name": "Frequency",
+    "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    "version": "1",
+  },
+  "message": {
+    "authorizedMsaId": "1",
+    "expiration": 100,
+    "schemaIds": [
+      8,
+      9,
+      10,
+      15,
+    ],
+  },
+  "primaryType": "AddProvider",
+  "types": {
+    "AddProvider": [
+      {
+        "name": "authorizedMsaId",
+        "type": "uint64",
+      },
+      {
+        "name": "schemaIds",
+        "type": "uint16[]",
+      },
+      {
+        "name": "expiration",
+        "type": "uint32",
+      },
+    ],
+    "EIP712Domain": [
+      {
+        "name": "name",
+        "type": "string",
+      },
+      {
+        "name": "version",
+        "type": "string",
+      },
+      {
+        "name": "chainId",
+        "type": "uint256",
+      },
+      {
+        "name": "verifyingContract",
+        "type": "address",
+      },
+    ],
+  },
+}
+`;
+
+exports[`Generate Mock Data > Generate the mocks for 712 Add Graph Key 1`] = `
+{
+  "domain": {
+    "chainId": "0x190f1b44",
+    "name": "Frequency",
+    "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    "version": "1",
+  },
+  "message": {
+    "actions": [
+      {
+        "actionType": "Add",
+        "data": "0x40a6836ea489047852d3f0297f8fe8ad6779793af4e9c6274c230c207b9b825026",
+        "index": 0,
+      },
+    ],
+    "expiration": 100,
+    "schemaId": 7,
+    "targetHash": 0,
+  },
+  "primaryType": "ItemizedSignaturePayloadV2",
+  "types": {
+    "EIP712Domain": [
+      {
+        "name": "name",
+        "type": "string",
+      },
+      {
+        "name": "version",
+        "type": "string",
+      },
+      {
+        "name": "chainId",
+        "type": "uint256",
+      },
+      {
+        "name": "verifyingContract",
+        "type": "address",
+      },
+    ],
+    "ItemAction": [
+      {
+        "name": "actionType",
+        "type": "string",
+      },
+      {
+        "name": "data",
+        "type": "bytes",
+      },
+      {
+        "name": "index",
+        "type": "uint16",
+      },
+    ],
+    "ItemizedSignaturePayloadV2": [
+      {
+        "name": "schemaId",
+        "type": "uint16",
+      },
+      {
+        "name": "targetHash",
+        "type": "uint32",
+      },
+      {
+        "name": "expiration",
+        "type": "uint32",
+      },
+      {
+        "name": "actions",
+        "type": "ItemAction[]",
+      },
+    ],
+  },
+}
+`;
+
+exports[`Generate Mock Data > Generate the mocks for 712 Handle Claim 1`] = `
+{
+  "domain": {
+    "chainId": "0x190f1b44",
+    "name": "Frequency",
+    "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    "version": "1",
+  },
+  "message": {
+    "expiration": 100,
+    "handle": "mock-handle",
+  },
+  "primaryType": "ClaimHandlePayload",
+  "types": {
+    "ClaimHandlePayload": [
+      {
+        "name": "handle",
+        "type": "string",
+      },
+      {
+        "name": "expiration",
+        "type": "uint32",
+      },
+    ],
+    "EIP712Domain": [
+      {
+        "name": "name",
+        "type": "string",
+      },
+      {
+        "name": "version",
+        "type": "string",
+      },
+      {
+        "name": "chainId",
+        "type": "uint256",
+      },
+      {
+        "name": "verifyingContract",
+        "type": "address",
+      },
+    ],
+  },
+}
+`;
