@@ -11,6 +11,7 @@ import {
   claimHandle712,
   mockCaip122,
 } from "./signature-requests.js";
+import { decodeSignedRequest } from '@projectlibertylabs/siwf';
 import { getGatewayAccount } from "./helpers/gateway.js";
 
 type Address = string;
@@ -150,10 +151,7 @@ export async function startSiwf(
   // Is address already an MSA?
   const hasAccount = await getGatewayAccount(gatewayFetchFn, userAddress);
 
-  // TODO: Parse the encodedSiwfSignedRequest
-  // - Extract the provider Id
-  // - Extract the delegations
-  // - Check requests, etc...
+  const { requestedSignatures, requestedCredentials, applicationContext} = decodeSignedRequest(encodedSiwfSignedRequest);
 
   if (!hasAccount) {
     // Validate incoming values
