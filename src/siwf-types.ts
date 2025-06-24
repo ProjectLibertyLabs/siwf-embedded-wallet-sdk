@@ -4,7 +4,7 @@ type CurveType = "Sr25519" | "Secp256k1";
 
 type AlgorithmType = "SR25519" | "SECP256K1";
 
-type SupportedPayload = any;
+type SupportedPayload = unknown;
 
 export type SignedPayload = Uint8Array | SupportedPayload;
 
