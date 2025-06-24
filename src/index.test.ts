@@ -5,8 +5,8 @@ describe("Basic startSiwf test", () => {
   it("Can do a thing", async () => {
     const resp = await startSiwf(
       "0xabcd",
-      () => "0xdef0",
-      () => ({ ok: true, json: () => ({}) }),
+      async () => "0xdef0",
+      async () => ({ ok: true, json: () => ({}) }) as Response,
       "",
       "handle-here",
       "email@example.com",
