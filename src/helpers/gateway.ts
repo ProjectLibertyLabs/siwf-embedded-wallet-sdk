@@ -7,7 +7,7 @@ import { GatewayFetchError } from "../error-types.js";
  * Fetches a user's account information (if present) from Gateway Services
  *
  * @param gatewayFetchFn Callback for performing request to gateway services
- * @param userAddress ???
+ * @param userAddress - the public key of the user who wishes to sign in
  * @returns An 'account response' when the user's account exists, and `null` otherwise
  * @throws `GatewayFetchError` when the request fails
  */
