@@ -151,7 +151,8 @@ export async function startSiwf(
   // Is address already an MSA?
   const hasAccount = await getGatewayAccount(gatewayFetchFn, userAddress);
 
-  const { requestedSignatures, requestedCredentials, applicationContext} = decodeSignedRequest(encodedSiwfSignedRequest);
+  const { requestedSignatures, requestedCredentials, applicationContext } =
+    decodeSignedRequest(encodedSiwfSignedRequest);
 
   if (!hasAccount) {
     // Validate incoming values

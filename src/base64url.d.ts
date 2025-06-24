@@ -10,10 +10,14 @@
  * @param state The Base64 conversion state. Pass an initial value of `{ queue: 0, queuedBits: 0 }`.
  * @param emit A function called with the next Base64 character when ready.
  */
-export declare function byteToBase64URL(byte: number | null, state: {
+export declare function byteToBase64URL(
+  byte: number | null,
+  state: {
     queue: number;
     queuedBits: number;
-}, emit: (char: string) => void): void;
+  },
+  emit: (char: string) => void,
+): void;
 /**
  * Converts a String char code (extracted using `string.charCodeAt(position)`) to a sequence of Base64-URL characters.
  *
@@ -21,10 +25,14 @@ export declare function byteToBase64URL(byte: number | null, state: {
  * @param state The Base64 state. Pass an initial value of `{ queue: 0, queuedBits: 0 }`.
  * @param emit A function called with the next byte.
  */
-export declare function byteFromBase64URL(charCode: number, state: {
+export declare function byteFromBase64URL(
+  charCode: number,
+  state: {
     queue: number;
     queuedBits: number;
-}, emit: (byte: number) => void): void;
+  },
+  emit: (byte: number) => void,
+): void;
 /**
  * Converts a JavaScript string (which may include any valid character) into a
  * Base64-URL encoded string. The string is first encoded in UTF-8 which is
@@ -46,14 +54,20 @@ export declare function stringFromBase64URL(str: string): string;
  * @param codepoint The Unicode codepoint.
  * @param emit      Function which will be called for each UTF-8 byte that represents the codepoint.
  */
-export declare function codepointToUTF8(codepoint: number, emit: (byte: number) => void): void;
+export declare function codepointToUTF8(
+  codepoint: number,
+  emit: (byte: number) => void,
+): void;
 /**
  * Converts a JavaScript string to a sequence of UTF-8 bytes.
  *
  * @param str  The string to convert to UTF-8.
  * @param emit Function which will be called for each UTF-8 byte of the string.
  */
-export declare function stringToUTF8(str: string, emit: (byte: number) => void): void;
+export declare function stringToUTF8(
+  str: string,
+  emit: (byte: number) => void,
+): void;
 /**
  * Converts a UTF-8 byte to a Unicode codepoint.
  *
@@ -62,7 +76,11 @@ export declare function stringToUTF8(str: string, emit: (byte: number) => void):
  *              sequence, an object with the shape `{ utf8seq: 0, codepoint: 0 }`.
  * @param emit  Function which will be called for each codepoint.
  */
-export declare function stringFromUTF8(byte: number, state: {
+export declare function stringFromUTF8(
+  byte: number,
+  state: {
     utf8seq: number;
     codepoint: number;
-}, emit: (codepoint: number) => void): void;
+  },
+  emit: (codepoint: number) => void,
+): void;
