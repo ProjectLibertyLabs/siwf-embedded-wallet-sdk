@@ -135,7 +135,6 @@ async function pollForAccount(
   // MOCK Timeout
   await new Promise((r) => setTimeout(r, 12000));
   const _ignoreForMock = await getGatewayAccount(gatewayFetchFn, userAddress);
-
   msaCreationCallbackFn(mockCreationGatewayAccount);
 }
 
