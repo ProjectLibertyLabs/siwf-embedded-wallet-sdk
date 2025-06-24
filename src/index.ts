@@ -11,6 +11,7 @@ import {
   claimHandle712,
   mockCaip122,
 } from "./signature-requests.js";
+import { GatewayFetchError } from "./error-types.js";
 
 type Address = string;
 
@@ -109,7 +110,16 @@ export function setMockForCreationGatewayAccount(mockValue: AccountResponse) {
   mockCreationGatewayAccount = mockValue;
 }
 
-async function getGatewayAccount(
+/**
+ * Fetches a user's account information (if present) from Gateway Services
+ *
+ * @param gatewayFetchFn Callback for performing request to gateway services
+ * @param userAddress ???
+ * @returns An 'account response' when the user's account exists, and `null` otherwise
+ * @throws `GatewayFetchError` when the request fails
+ */
+// TODO: Find a way to unit test without `export`-ing ..?
+export async function getGatewayAccount(
   gatewayFetchFn: GatewayFetchFn,
   userAddress: string,
 ): Promise<AccountResponse | null> {
@@ -119,12 +129,17 @@ async function getGatewayAccount(
   );
 
   if (response.ok) {
-    const _ignoredBody = response.json();
-    return mockExistingGatewayAccount;
+    const body = await response.json() as AccountResponse;
+    // TODO(?): validate with `zod` ..?
+    return body;
+  } else {
+    switch (response.status) {
+      case 404:
+        return null; // The user does not (yet) exist on chain
+      default:
+        throw new GatewayFetchError("Failed GatewayFetchFn for GET Account", response);
+    }
   }
-
-  // TODO: These errors should be typed to match the real SDK
-  throw new Error("Failed GatewayFetchFn for GET Account");
 }
 
 async function postGatewaySiwf(
