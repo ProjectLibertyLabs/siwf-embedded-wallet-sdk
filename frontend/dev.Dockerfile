@@ -31,4 +31,4 @@ EXPOSE 3000
 VOLUME [ "/app" ]
 
 # Run the application.
-CMD npm start
+CMD npx expo start

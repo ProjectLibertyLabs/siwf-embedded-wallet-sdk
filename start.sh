@@ -167,23 +167,9 @@ EOI
     DEFAULT_IPFS_UA_GATEWAY_URL="http://localhost:8080"
     DEFAULT_CONTENT_DB_VOLUME="content_db"
 
-    # If the user has selected not to start the frontend then don't ask for the title or header color
+    # If the user has selected not to start the frontend
     if [[ "${PROFILES}" =~ frontend ]]
     then
-        # Allow different instances to have different banner titles
-        ask_and_save REACT_APP_TITLE "Enter the title of the application" "Social Web Demo"
-
-        # Allow different instances to have different background colors in the header
-        echo
-        ${OUTPUT} << EOI
-Select the background color of the header:
-EOI
-        selected_color_hex=$(select_color)
-        export_save_variable REACT_APP_HEADER_BG_COLOR "${selected_color_hex}"
-    else
-        export_save_variable REACT_APP_TITLE "Social Web Demo"
-        export_save_variable REACT_APP_HEADER_BG_COLOR "#FFFFFF"
-    fi
 
     ask_and_save FREQUENCY_API_WS_URL "Enter the Frequency API WS URL" "$DEFAULT_FREQUENCY_API_WS_URL"
     ask_and_save SIWF_NODE_RPC_URL "Enter the SIWF Node RPC URL" "$DEFAULT_SIWF_NODE_RPC_URL"

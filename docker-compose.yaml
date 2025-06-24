@@ -53,8 +53,6 @@ x-siwf-embedded-wallet-sdk: &siwf-embedded-wallet-sdk
 
 x-siwf-embedded-wallet-frontend: &siwf-embedded-wallet-frontend
   REACT_APP_BACKEND_URL: 'http://localhost:${SERVICE_PORT_8}'
-  REACT_APP_TITLE: ${REACT_APP_TITLE}
-  REACT_APP_HEADER_BG_COLOR: ${REACT_APP_HEADER_BG_COLOR}
 
 services:
   redis:
@@ -194,7 +192,7 @@ services:
       <<: [*common-environment, *siwf-embedded-wallet-sdk]
       IPFS_GATEWAY_URL: 'http://ipfs:8080'
     volumes:
-      - :/app
+      - ./backend:/app
       - ${CONTENT_DB_VOLUME}:/app/db
       - backend_node_cache:/app/node_modules
     networks:
