@@ -6,11 +6,12 @@ import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
 import { mockGatewayLoginResponse } from "./static-mocks/gateway-login.js";
 import {
-  addDelegation712,
   addGraphKey712,
   claimHandle712,
   mockCaip122,
 } from "./signature-requests.js";
+import { createSignedAddProviderPayload } from "./helpers/payloads.js";
+
 
 type Address = string;
 
@@ -23,26 +24,28 @@ interface CAIP122 {
   ];
 }
 
+export interface EIP712Document {
+  types: {
+    EIP712Domain: { name: string; type: string }[];
+    [key: string]: { name: string; type: string }[];
+  };
+  primaryType: string;
+  domain: {
+    name: string;
+    version: string;
+    chainId: string;
+    verifyingContract: string;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  message: Record<string, any>;
+}
+
 // https://eips.ethereum.org/EIPS/eip-712#specification-of-the-eth_signtypeddata-json-rpc
-interface EIP712 {
+export interface EIP712 {
   method: "eth_signTypedData_v4";
   params: [
     Address,
-    {
-      types: {
-        EIP712Domain: { name: string; type: string }[];
-        [key: string]: { name: string; type: string }[];
-      };
-      primaryType: string;
-      domain: {
-        name: string;
-        version: string;
-        chainId: string;
-        verifyingContract: string;
-      };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: Record<string, any>;
-    },
+    EIP712Document,
   ];
 }
 
@@ -183,11 +186,18 @@ export async function startSiwf(
     // Generate Graph Key
     // Generate Recovery Key
 
-    // Sign AddDelegation
-    const _ignoreForMockAddDelegationSignature = await signatureFn({
-      method: "eth_signTypedData_v4",
-      params: [userAddress, addDelegation712],
-    });
+    // Sign AddProvider
+    // TODO: Pass actual values from `encodedSiwfSignedRequest`
+    const addProviderArguments = {
+      authorizedMsaId: 1n,
+      schemaIds: [8, 9, 10, 15],
+      expiration: 100,
+    }
+    const _addProviderPayload = await createSignedAddProviderPayload(
+      userAddress,
+      signatureFn,
+      addProviderArguments,
+    )
     // Sign Handle
     const _ignoreForMockSetHandleSignature = await signatureFn({
       method: "eth_signTypedData_v4",

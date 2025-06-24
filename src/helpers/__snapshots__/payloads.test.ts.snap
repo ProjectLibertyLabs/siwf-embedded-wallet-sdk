@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createSignedAddProviderPayload > returns the correct payload 1`] = `
+{
+  "endpoint": {
+    "extrinsic": "createSponsoredAccountWithDelegation",
+    "pallet": "msa",
+  },
+  "payload": {
+    "authorizedMsaId": 1n,
+    "expiration": 100,
+    "schemaIds": [
+      8,
+      9,
+      10,
+      15,
+    ],
+  },
+  "signature": {
+    "algo": "SECP256K1",
+    "encodedValue": "fake-signature",
+    "encoding": "base16",
+  },
+  "type": "addProvider",
+}
+`;

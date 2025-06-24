@@ -38,6 +38,12 @@ export interface SiwfResponsePayloadLogin extends SiwfResponsePayloadBase {
   };
 }
 
+export interface AddProviderPayloadArguments extends Record<string, unknown> {
+  authorizedMsaId: bigint;
+  schemaIds: number[];
+  expiration: number;
+}
+
 export interface SiwfResponsePayloadAddProvider
   extends SiwfResponsePayloadBase {
   endpoint: {
@@ -45,11 +51,7 @@ export interface SiwfResponsePayloadAddProvider
     extrinsic: "createSponsoredAccountWithDelegation" | "grantDelegation";
   };
   type: "addProvider";
-  payload: {
-    authorizedMsaId: number;
-    schemaIds: number[];
-    expiration: number;
-  };
+  payload: AddProviderPayloadArguments;
 }
 
 export interface SiwfResponsePayloadItemActions
