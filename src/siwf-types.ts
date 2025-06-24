@@ -10,8 +10,8 @@ export type SignedPayload = Uint8Array | SupportedPayload;
 
 export interface SiwfPublicKey {
   encodedValue: string;
-  encoding: "base58";
-  format: "ss58";
+  encoding: "base58" | "base16";
+  format: "ss58" | "eip-55";
   type: CurveType;
 }
 

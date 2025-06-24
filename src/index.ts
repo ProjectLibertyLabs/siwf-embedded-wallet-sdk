@@ -5,24 +5,86 @@ import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
 import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
 import { mockGatewayLoginResponse } from "./static-mocks/gateway-login.js";
+import {
+  addDelegation712,
+  addGraphKey712,
+  claimHandle712,
+  mockCaip122,
+} from "./signature-requests.js";
 
-export type SignatureFn = (
-  address: string,
-  standard: "eip712" | "caip122",
-  payload: string,
-) => Promise<string>;
+type Address = string;
+
+// https://chainagnostic.org/CAIPs/caip-122
+interface CAIP122 {
+  method: "personal_sign";
+  params: [
+    Address,
+    string, // Signing Payload
+  ];
+}
+
+// https://eips.ethereum.org/EIPS/eip-712#specification-of-the-eth_signtypeddata-json-rpc
+interface EIP712 {
+  method: "eth_signTypedData_v4";
+  params: [
+    Address,
+    {
+      types: {
+        EIP712Domain: { name: string; type: string }[];
+        [key: string]: { name: string; type: string }[];
+      };
+      primaryType: string;
+      domain: {
+        name: string;
+        version: string;
+        chainId: string;
+        verifyingContract: string;
+      };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      message: Record<string, any>;
+    },
+  ];
+}
+
+// Matches https://docs.metamask.io/wallet/reference/provider-api/#request
+export type SignatureFn = (request: CAIP122 | EIP712) => Promise<string>;
 
 interface GatewayFetchBody {
   authorizationPayload: string;
 }
 
+export type GatewayFetchPostSiwfFn = (
+  method: "POST",
+  path: "/v2/accounts/siwf",
+  body: GatewayFetchBody,
+) => Promise<Response>;
+
+export type GatewayFetchGetAccountFn = (
+  method: "GET",
+  path: `/v1/accounts/account/${Address}`,
+) => Promise<Response>;
+
 export type GatewayFetchFn = (
-  method: "GET" | "POST" | "PUT",
-  path: string,
+  method: "GET" | "POST",
+  path: `/v1/accounts/account/${Address}` | "/v2/accounts/siwf",
   body?: GatewayFetchBody,
 ) => Promise<Response>;
 
 export type MsaCreationCallbackFn = (account: AccountResponse) => void;
+
+// This is mocked as we only deal with converting one control key
+function convertControlKeyToEthereum<T extends { controlKey: string }>(
+  input: T,
+): T {
+  if (input.controlKey !== "f6d1YDa4agkaQ5Kqq8ZKwCf2Ew8UFz9ot2JNrBwHsFkhdtHEn")
+    throw new Error(
+      "Mock only supports f6d1YDa4agkaQ5Kqq8ZKwCf2Ew8UFz9ot2JNrBwHsFkhdtHEn",
+    );
+  return {
+    ...input,
+    controlKey: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+  };
+}
 
 // Mock so that the existing account is returned
 let mockExistingGatewayAccount: null | AccountResponse = null;
@@ -90,6 +152,7 @@ async function pollForAccount(
   // MOCK Timeout
   await new Promise((r) => setTimeout(r, 12000));
   const _ignoreForMock = await getGatewayAccount(gatewayFetchFn, userAddress);
+
   msaCreationCallbackFn(mockCreationGatewayAccount);
 }
 
@@ -121,25 +184,25 @@ export async function startSiwf(
     // Generate Recovery Key
 
     // Sign AddDelegation
-    const _ignoreForMockAddDelegationSignature = await signatureFn(
-      userAddress,
-      "eip712",
-      "",
-    );
+    const _ignoreForMockAddDelegationSignature = await signatureFn({
+      method: "eth_signTypedData_v4",
+      params: [userAddress, addDelegation712],
+    });
     // Sign Handle
-    const _ignoreForMockSetHandleSignature = await signatureFn(
-      userAddress,
-      "eip712",
-      "",
-    );
+    const _ignoreForMockSetHandleSignature = await signatureFn({
+      method: "eth_signTypedData_v4",
+      params: [userAddress, claimHandle712],
+    });
     // Sign Graph Key Add
-    const _ignoreForMockAddGraphKeySignature = await signatureFn(
-      userAddress,
-      "eip712",
-      "",
-    );
+    const _ignoreForMockAddGraphKeySignature = await signatureFn({
+      method: "eth_signTypedData_v4",
+      params: [userAddress, addGraphKey712],
+    });
     // Sign Recovery Key
-    // const _ignoreForMockSetRecoveryKeySignature = await signatureFn(userAddress, "eip712", "");
+    // const _ignoreForMockSetRecoveryHashSignature = await signatureFn({
+    //   method: "eth_signTypedData_v4",
+    //   params: [userAddress, addRecoveryHash712],
+    // });
 
     const siwfResponse = mockNewUserResponse();
 
@@ -157,9 +220,15 @@ export async function startSiwf(
     // Actual:
     // return _ignoreForMockGatewaySiwfResponse;
     // Return Mock
-    return mockGatewayNewUserResponse();
+    return convertControlKeyToEthereum(mockGatewayNewUserResponse());
   } else {
     // Process Login
+
+    // Request CAIP-122 Signature
+    const _ignoreForMockCaip122Signature = await signatureFn({
+      method: "personal_sign",
+      params: [userAddress, mockCaip122],
+    });
 
     // TODO: Build the mock siwfResponse
     const siwfResponse = mockLoginResponse();
@@ -172,6 +241,6 @@ export async function startSiwf(
     // Actual:
     // return _ignoreForMockGatewaySiwfResponse;
     // Return Mock
-    return mockGatewayLoginResponse();
+    return convertControlKeyToEthereum(mockGatewayLoginResponse());
   }
 }
