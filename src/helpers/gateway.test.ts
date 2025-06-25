@@ -2,7 +2,12 @@ import { describe, it, expect } from "vitest";
 import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
 import { AccountResponse, GatewaySiwfResponse } from "../gateway-types";
 import { GatewayFetchError } from "../error-types";
-import { getGatewayAccount, poll, pollForAccount, postGatewaySiwf } from "./gateway";
+import {
+  getGatewayAccount,
+  poll,
+  pollForAccount,
+  postGatewaySiwf,
+} from "./gateway";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { SiwfResponse } from "../siwf-types";
 
@@ -59,20 +64,28 @@ describe("getGatewayAccount", () => {
 
   describe("postGatewaySiwf", () => {
     it("submits correctly", async () => {
-      const response: GatewaySiwfResponse = {
+      const gatewayResponse: GatewaySiwfResponse = {
         controlKey: "f6d1YDa4agkaQ5Kqq8ZKwCf2Ew8UFz9ot2JNrBwHsFkhdtHEn",
         msaId: "314159265358979323846264338",
       };
       const fetchFn: GatewayFetchFn = async (method, path) => {
         expect(method).toStrictEqual("POST");
         expect(path).toStrictEqual("/v2/accounts/siwf");
-        return new Response(JSON.stringify(response), { status: 200 });
+        return new Response(JSON.stringify(gatewayResponse), { status: 200 });
       };
-      const address = "0x1234";
+      const response: SiwfResponse = {
+        userPublicKey: {
+          encodedValue: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+          encoding: "base16",
+          format: "eip-55",
+          type: "Secp256k1",
+        },
+        payloads: [],
+      };
 
-      const result = await postGatewaySiwf(fetchFn, address);
+      const result = await postGatewaySiwf(fetchFn, response);
 
-      expect(result).toStrictEqual(response);
+      expect(result).toStrictEqual(gatewayResponse);
     });
     it("handles errors correctly", async () => {
       const fetchFn: GatewayFetchFn = async (_method, _path) => {
@@ -85,7 +98,7 @@ describe("getGatewayAccount", () => {
           format: "eip-55",
           type: "Secp256k1",
         },
-        payloads: []
+        payloads: [],
       };
 
       try {
@@ -100,57 +113,59 @@ describe("getGatewayAccount", () => {
 
   describe("poll", () => {
     it("returns a successful result immediately", async () => {
-      let invocations = 0
+      let invocations = 0;
       const mockFn = async () => {
-        invocations++
-        return Promise.resolve(true)
-      }
+        invocations++;
+        return Promise.resolve(true);
+      };
 
-      const result = await poll(mockFn, 0, 60)
+      const result = await poll(mockFn, 0, 60);
 
-      expect(result).toStrictEqual(true)
-      expect(invocations).toStrictEqual(1)
+      expect(result).toStrictEqual(true);
+      expect(invocations).toStrictEqual(1);
     });
     it("retries when first attempt fails", async () => {
-      let invocations = 0
+      let invocations = 0;
       const mockFn = async () => {
-        invocations++
+        invocations++;
 
         switch (invocations) {
-          case 1: throw new Error("Mock failure")
-          default: return Promise.resolve(true)
+          case 1:
+            throw new Error("Mock failure");
+          default:
+            return Promise.resolve(true);
         }
-      }
+      };
 
-      const result = await poll(mockFn, 0, 60)
+      const result = await poll(mockFn, 0, 60);
 
-      expect(result).toStrictEqual(true)
-      expect(invocations).toStrictEqual(2)
+      expect(result).toStrictEqual(true);
+      expect(invocations).toStrictEqual(2);
     });
     it("gives up after the timeout is exceeded", async () => {
-      let invocations = 0
+      let invocations = 0;
       const mockFn = async () => {
-        invocations++
+        invocations++;
 
-        throw new Error("Mock failure")
-      }
+        throw new Error("Mock failure");
+      };
       // Freeze time until after 5 failed attempts
       const mockEpochSupplier = () => {
         if (invocations < 5) {
-          return 0
+          return 0;
         } else {
-          return 10 * 1000 // Skip ahead 10 seconds
+          return 10 * 1000; // Skip ahead 10 seconds
         }
-      }
+      };
 
       try {
-        await poll(mockFn, 0, 1, mockEpochSupplier)
-        expect.fail("No error thrown")
+        await poll(mockFn, 0, 1, mockEpochSupplier);
+        expect.fail("No error thrown");
       } catch (err) {
         expect(err).toBeInstanceOf(Error);
       }
 
-      expect(invocations).toStrictEqual(5)
+      expect(invocations).toStrictEqual(5);
     });
   });
 
@@ -162,20 +177,20 @@ describe("getGatewayAccount", () => {
           base_handle: "mock-siwf-ew",
           canonical_base: "m0ck-s1wf-ew",
           suffix: 0,
-        }
-      }
+        },
+      };
       const mockFetchFn: GatewayFetchFn = async (method, path) => {
         expect(method).toStrictEqual("GET");
         expect(path.startsWith("/v1/accounts/account")).toStrictEqual(true);
 
-        return new Response(JSON.stringify(gatewayResponse), { status: 200 })
-      }
+        return new Response(JSON.stringify(gatewayResponse), { status: 200 });
+      };
       const address = "0x1234";
       const callbackFn: MsaCreationCallbackFn = (data) => {
-        expect(data).toStrictEqual(gatewayResponse)
-      }
+        expect(data).toStrictEqual(gatewayResponse);
+      };
 
-      await pollForAccount(mockFetchFn, address, callbackFn)
+      await pollForAccount(mockFetchFn, address, callbackFn);
     });
   });
 

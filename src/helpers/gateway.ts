@@ -1,4 +1,4 @@
-import { GatewayFetchFn, MsaCreationCallbackFn } from "../types"
+import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
 import { AccountResponse, GatewaySiwfResponse } from "../gateway-types.js";
 import { GatewayFetchError } from "../error-types.js";
 import { stringToBase64URL } from "src/base64url";
@@ -40,11 +40,9 @@ export async function postGatewaySiwf(
   gatewayFetchFn: GatewayFetchFn,
   siwfResponse: SiwfResponse,
 ): Promise<GatewaySiwfResponse> {
-  const response = await gatewayFetchFn(
-    "POST",
-    "/v2/accounts/siwf",
-    { authorizationPayload: stringToBase64URL(JSON.stringify(siwfResponse)) }
-  );
+  const response = await gatewayFetchFn("POST", "/v2/accounts/siwf", {
+    authorizationPayload: stringToBase64URL(JSON.stringify(siwfResponse)),
+  });
 
   if (response.ok) {
     const parsedResponse = response.json();
@@ -53,34 +51,36 @@ export async function postGatewaySiwf(
     throw new GatewayFetchError(
       "Failed GatewayFetchFn for POST siwf",
       response,
-    )
-  };
+    );
+  }
 }
 
 export async function poll<T>(
   fn: () => Promise<T>,
   delaySeconds: number, // Time between requests
   timeoutSeconds: number,
-  epochMillisSupplier: () => number = Date.now
+  epochMillisSupplier: () => number = Date.now,
 ): Promise<T> {
   let attempt = 0;
-  const startEpochMillis = epochMillisSupplier()
-  const timeoutEpochMillies = startEpochMillis + (timeoutSeconds * 1000)
+  const startEpochMillis = epochMillisSupplier();
+  const timeoutEpochMillies = startEpochMillis + timeoutSeconds * 1000;
 
   while (epochMillisSupplier() < timeoutEpochMillies) {
-    attempt++
+    attempt++;
 
     try {
-      const result = await fn()
-      return result
+      const result = await fn();
+      return result;
     } catch (e: unknown) {
-      console.log(`[poll] Attempt ${attempt} failed: ${e}`)
+      console.log(`[poll] Attempt ${attempt} failed: ${e}`);
     }
 
     await new Promise((r) => setTimeout(r, delaySeconds * 1000));
   }
 
-  throw new Error(`Operation timed out after ${attempt} attempts over ${timeoutSeconds} seconds.`)
+  throw new Error(
+    `Operation timed out after ${attempt} attempts over ${timeoutSeconds} seconds.`,
+  );
 }
 
 export async function pollForAccount(
@@ -88,20 +88,20 @@ export async function pollForAccount(
   userAddress: string,
   msaCreationCallbackFn: MsaCreationCallbackFn,
   requestDelaySeconds: number = 5,
-  timeoutSeconds: number = 600
+  timeoutSeconds: number = 600,
 ) {
   const response = await poll(
     async () => {
       const account = await getGatewayAccount(gatewayFetchFn, userAddress);
       if (account === null) {
-        throw Error("Account does not (yet) exist.")
+        throw Error("Account does not (yet) exist.");
       } else {
-        return account
+        return account;
       }
     },
     requestDelaySeconds,
     timeoutSeconds,
-  )
+  );
 
   msaCreationCallbackFn(response);
 }

@@ -1,5 +1,8 @@
 import { GatewaySiwfResponse } from "./gateway-types.js";
-import { ClaimHandlePayloadArguments, ItemActionsPayloadArguments } from "./siwf-types.js";
+import {
+  ClaimHandlePayloadArguments,
+  ItemActionsPayloadArguments,
+} from "./siwf-types.js";
 import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
 import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
@@ -11,7 +14,11 @@ import {
   createSignedGraphKeyPayload,
 } from "./helpers/payloads.js";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
-import { getGatewayAccount, pollForAccount, postGatewaySiwf } from "./helpers/gateway.js";
+import {
+  getGatewayAccount,
+  pollForAccount,
+  postGatewaySiwf,
+} from "./helpers/gateway.js";
 import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 import { generateGraphKeyPair } from "./helpers/crypto.js";
 
