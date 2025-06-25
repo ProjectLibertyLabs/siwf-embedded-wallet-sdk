@@ -32,6 +32,7 @@
   "devDependencies": {
     "@eslint/js": "^9.29.0",
     "@frequency-chain/ethereum-utils": "^1.17.0-rc6",
+    "@projectlibertylabs/siwf": "^2.1.4",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.29.0",

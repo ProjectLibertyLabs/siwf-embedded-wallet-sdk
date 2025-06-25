@@ -90,7 +90,10 @@ export async function startSiwf(
     gatewayFetchFn,
     decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue,
   );
-  const _providerMsaId = providerAccount?.msaId;
+
+  if (providerAccount === null) {
+    throw new Error("Unable to find provider account!")
+  }
 
   if (!hasAccount) {
     // Validate incoming values
@@ -103,11 +106,11 @@ export async function startSiwf(
     // Generate Recovery Key
 
     // Sign AddProvider
-    // TODO: Pass actual values from `encodedSiwfSignedRequest`
+    const requestedPermissions = decodedSiwfSignedRequest.requestedSignatures.payload.permissions
     const addProviderArguments = {
-      authorizedMsaId: 1n,
-      schemaIds: [8, 9, 10, 15],
-      expiration: 100,
+      authorizedMsaId: providerAccount.msaId,
+      schemaIds: requestedPermissions,
+      expiration: 100, // TODO: Calculate correctly based on chain state
     }
     const _addProviderPayload = await createSignedAddProviderPayload(
       userAddress,
