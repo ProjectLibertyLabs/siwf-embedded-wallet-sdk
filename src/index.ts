@@ -1,11 +1,15 @@
 import { GatewaySiwfResponse } from "./gateway-types.js";
-import { ItemActionsPayloadArguments } from "./siwf-types.js";
+import { ClaimHandlePayloadArguments, ItemActionsPayloadArguments } from "./siwf-types.js";
 import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
 import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
 import { mockGatewayLoginResponse } from "./static-mocks/gateway-login.js";
-import { claimHandle712, mockCaip122 } from "./signature-requests.js";
-import { createSignedAddProviderPayload, createSignedGraphKeyPayload } from "./helpers/payloads.js";
+import { mockCaip122 } from "./signature-requests.js";
+import {
+  createSignedAddProviderPayload,
+  createSignedClaimHandlePayload,
+  createSignedGraphKeyPayload,
+} from "./helpers/payloads.js";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { getGatewayAccount, pollForAccount, postGatewaySiwf } from "./helpers/gateway.js";
 import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
@@ -46,7 +50,7 @@ export async function startSiwf(
   );
 
   if (providerAccount === null) {
-    throw new Error("Unable to find provider account!")
+    throw new Error("Unable to find provider account!");
   }
 
   if (!hasAccount) {
@@ -58,26 +62,34 @@ export async function startSiwf(
 
     // Generate Graph Key
     const expiration = 100; // TODO: Calculate correctly based on chain state
-    const graphKeyPair = generateGraphKeyPair()
+    const graphKeyPair = generateGraphKeyPair();
     // Generate Recovery Key
 
     // Sign AddProvider
-    const requestedPermissions = decodedSiwfSignedRequest.requestedSignatures.payload.permissions
+    const requestedPermissions =
+      decodedSiwfSignedRequest.requestedSignatures.payload.permissions;
     const addProviderArguments = {
       authorizedMsaId: providerAccount.msaId,
       schemaIds: requestedPermissions,
       expiration,
-    }
+    };
     const _addProviderPayload = await createSignedAddProviderPayload(
       userAddress,
       signatureFn,
       addProviderArguments,
-    )
+    );
+
     // Sign Handle
-    const _ignoreForMockSetHandleSignature = await signatureFn({
-      method: "eth_signTypedData_v4",
-      params: [userAddress, claimHandle712],
-    });
+    const claimHandleArguments: ClaimHandlePayloadArguments = {
+      baseHandle: signUpHandle,
+      expiration,
+    };
+    const _claimHandlePayload = await createSignedClaimHandlePayload(
+      userAddress,
+      signatureFn,
+      claimHandleArguments,
+    );
+
     // Sign Graph Key Add
     const addGraphKeyArguments: ItemActionsPayloadArguments = {
       schemaId: 7,
@@ -89,12 +101,12 @@ export async function startSiwf(
           payloadHex: graphKeyPair.publicKey,
         },
       ],
-    }
+    };
     const _addGraphKeyPayload = await createSignedGraphKeyPayload(
       userAddress,
       signatureFn,
-      addGraphKeyArguments
-    )
+      addGraphKeyArguments,
+    );
     // Sign Recovery Key
     // const _ignoreForMockSetRecoveryHashSignature = await signatureFn({
     //   method: "eth_signTypedData_v4",
