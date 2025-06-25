@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { createSignedAddProviderPayload, createSignedGraphKeyPayload } from "./payloads";
-import { SiwfResponsePayloadAddProvider } from "../siwf-types";
+import { createSignedAddProviderPayload, createSignedClaimHandlePayload, createSignedGraphKeyPayload } from "./payloads";
+import { SiwfResponsePayloadAddProvider, SiwfResponsePayloadClaimHandle } from "../siwf-types";
 
 
 describe("createSignedAddProviderPayload", () => {
@@ -15,6 +15,25 @@ describe("createSignedAddProviderPayload", () => {
         authorizedMsaId: 1n,
         schemaIds: [8, 9, 10, 15],
         expiration: 100,
+      },
+    )
+
+    expect(payload).toMatchSnapshot()
+  });
+});
+
+describe("createSignedAddProviderPayload", () => {
+    it("returns the correct payload", async () => {
+        const userAddress = "0x1234"
+      const baseHandle = "Alice"
+      const signatureFn = async (_request) => "fake-signature"
+
+    const payload: SiwfResponsePayloadClaimHandle = await createSignedClaimHandlePayload(
+      userAddress,
+      signatureFn,
+      {
+        baseHandle,
+        expiration: 100
       },
     )
 

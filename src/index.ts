@@ -1,12 +1,12 @@
-import { ItemActionsPayloadArguments, SiwfResponse } from "./siwf-types.js";
+import { ClaimHandlePayloadArguments, ItemActionsPayloadArguments, SiwfResponse } from "./siwf-types.js";
 import { stringToBase64URL } from "./base64url.js";
 import { AccountResponse, GatewaySiwfResponse } from "./gateway-types.js";
 import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
 import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
 import { mockGatewayLoginResponse } from "./static-mocks/gateway-login.js";
-import { claimHandle712, mockCaip122 } from "./signature-requests.js";
-import { createSignedAddProviderPayload, createSignedGraphKeyPayload } from "./helpers/payloads.js";
+import { mockCaip122 } from "./signature-requests.js";
+import { createSignedAddProviderPayload, createSignedClaimHandlePayload, createSignedGraphKeyPayload } from "./helpers/payloads.js";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { getGatewayAccount } from "./helpers/gateway.js";
 import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
@@ -116,11 +116,14 @@ export async function startSiwf(
       signatureFn,
       addProviderArguments,
     )
+
     // Sign Handle
-    const _ignoreForMockSetHandleSignature = await signatureFn({
-      method: "eth_signTypedData_v4",
-      params: [userAddress, claimHandle712],
-    });
+    const claimHandleArguments: ClaimHandlePayloadArguments = {
+      baseHandle: signUpHandle,
+      expiration
+    }
+    const _claimHandlePayload = await createSignedClaimHandlePayload(userAddress, signatureFn, claimHandleArguments)
+
     // Sign Graph Key Add
     const addGraphKeyArguments: ItemActionsPayloadArguments = {
       schemaId: 7,
