@@ -1,6 +1,4 @@
-import { SiwfResponse } from "./siwf-types.js";
-import { stringToBase64URL } from "./base64url.js";
-import { AccountResponse, GatewaySiwfResponse } from "./gateway-types.js";
+import { GatewaySiwfResponse } from "./gateway-types.js";
 import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
 import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
@@ -12,7 +10,7 @@ import {
 } from "./signature-requests.js";
 import { createSignedAddProviderPayload } from "./helpers/payloads.js";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
-import { getGatewayAccount } from "./helpers/gateway.js";
+import { getGatewayAccount, pollForAccount, postGatewaySiwf } from "./helpers/gateway.js";
 import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 
 // This is mocked as we only deal with converting one control key
@@ -27,48 +25,6 @@ function convertControlKeyToEthereum<T extends { controlKey: string }>(
     ...input,
     controlKey: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
   };
-}
-
-// Mock for post MSA Creation
-let mockCreationGatewayAccount: AccountResponse = {
-  msaId: "47",
-  handle: {
-    base_handle: "mock-siwf-ew",
-    canonical_base: "m0ck-s1wf-ew",
-    suffix: 0,
-  },
-};
-
-export function setMockForCreationGatewayAccount(mockValue: AccountResponse) {
-  mockCreationGatewayAccount = mockValue;
-}
-
-async function postGatewaySiwf(
-  gatewayFetchFn: GatewayFetchFn,
-  siwfResponse: SiwfResponse,
-): Promise<GatewaySiwfResponse> {
-  const response = await gatewayFetchFn("POST", "/v2/accounts/siwf", {
-    authorizationPayload: stringToBase64URL(JSON.stringify(siwfResponse)),
-  });
-
-  if (response.ok) {
-    const parsedResponse = response.json();
-    return parsedResponse;
-  }
-
-  // TODO: These errors should be typed to match the real SDK
-  throw new Error("Failed GatewayFetchFn for POST siwf");
-}
-
-async function pollForAccount(
-  gatewayFetchFn: GatewayFetchFn,
-  userAddress: string,
-  msaCreationCallbackFn: MsaCreationCallbackFn,
-) {
-  // MOCK Timeout
-  await new Promise((r) => setTimeout(r, 12000));
-  const _ignoreForMock = await getGatewayAccount(gatewayFetchFn, userAddress);
-  msaCreationCallbackFn(mockCreationGatewayAccount);
 }
 
 export async function startSiwf(
