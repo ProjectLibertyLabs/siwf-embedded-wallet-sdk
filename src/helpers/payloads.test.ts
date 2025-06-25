@@ -19,7 +19,7 @@ describe("createSignedAddProviderPayload", () => {
   });
 });
 
-describe("createSignedAddProviderPayload", () => {
+describe("createSignedClaimHandlePayload", () => {
   it("returns the correct payload", async () => {
     const userAddress = "0x1234";
     const baseHandle = "Alice";
