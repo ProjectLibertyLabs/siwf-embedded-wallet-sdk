@@ -6,73 +6,14 @@ import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
 import { mockGatewayLoginResponse } from "./static-mocks/gateway-login.js";
 import {
-  addDelegation712,
   addGraphKey712,
   claimHandle712,
   mockCaip122,
 } from "./signature-requests.js";
+import { createSignedAddProviderPayload } from "./helpers/payloads.js";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { getGatewayAccount } from "./helpers/gateway.js";
-
-type Address = string;
-
-// https://chainagnostic.org/CAIPs/caip-122
-interface CAIP122 {
-  method: "personal_sign";
-  params: [
-    Address,
-    string, // Signing Payload
-  ];
-}
-
-// https://eips.ethereum.org/EIPS/eip-712#specification-of-the-eth_signtypeddata-json-rpc
-interface EIP712 {
-  method: "eth_signTypedData_v4";
-  params: [
-    Address,
-    {
-      types: {
-        EIP712Domain: { name: string; type: string }[];
-        [key: string]: { name: string; type: string }[];
-      };
-      primaryType: string;
-      domain: {
-        name: string;
-        version: string;
-        chainId: string;
-        verifyingContract: string;
-      };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      message: Record<string, any>;
-    },
-  ];
-}
-
-// Matches https://docs.metamask.io/wallet/reference/provider-api/#request
-export type SignatureFn = (request: CAIP122 | EIP712) => Promise<string>;
-
-interface GatewayFetchBody {
-  authorizationPayload: string;
-}
-
-export type GatewayFetchPostSiwfFn = (
-  method: "POST",
-  path: "/v2/accounts/siwf",
-  body: GatewayFetchBody,
-) => Promise<Response>;
-
-export type GatewayFetchGetAccountFn = (
-  method: "GET",
-  path: `/v1/accounts/account/${Address}`,
-) => Promise<Response>;
-
-export type GatewayFetchFn = (
-  method: "GET" | "POST",
-  path: `/v1/accounts/account/${Address}` | "/v2/accounts/siwf",
-  body?: GatewayFetchBody,
-) => Promise<Response>;
-
-export type MsaCreationCallbackFn = (account: AccountResponse) => void;
+import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 
 // This is mocked as we only deal with converting one control key
 function convertControlKeyToEthereum<T extends { controlKey: string }>(
@@ -86,15 +27,6 @@ function convertControlKeyToEthereum<T extends { controlKey: string }>(
     ...input,
     controlKey: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
   };
-}
-
-// Mock so that the existing account is returned
-let mockExistingGatewayAccount: null | AccountResponse = null;
-
-export function setMockForExistingGatewayAccount(
-  mockValue: null | AccountResponse,
-) {
-  mockExistingGatewayAccount = mockValue;
 }
 
 // Mock for post MSA Creation
@@ -158,7 +90,10 @@ export async function startSiwf(
     gatewayFetchFn,
     decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue,
   );
-  const _providerMsaId = providerAccount?.msaId;
+
+  if (providerAccount === null) {
+    throw new Error("Unable to find provider account!")
+  }
 
   if (!hasAccount) {
     // Validate incoming values
@@ -170,11 +105,18 @@ export async function startSiwf(
     // Generate Graph Key
     // Generate Recovery Key
 
-    // Sign AddDelegation
-    const _ignoreForMockAddDelegationSignature = await signatureFn({
-      method: "eth_signTypedData_v4",
-      params: [userAddress, addDelegation712],
-    });
+    // Sign AddProvider
+    const requestedPermissions = decodedSiwfSignedRequest.requestedSignatures.payload.permissions
+    const addProviderArguments = {
+      authorizedMsaId: providerAccount.msaId,
+      schemaIds: requestedPermissions,
+      expiration: 100, // TODO: Calculate correctly based on chain state
+    }
+    const _addProviderPayload = await createSignedAddProviderPayload(
+      userAddress,
+      signatureFn,
+      addProviderArguments,
+    )
     // Sign Handle
     const _ignoreForMockSetHandleSignature = await signatureFn({
       method: "eth_signTypedData_v4",

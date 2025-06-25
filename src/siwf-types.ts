@@ -1,4 +1,5 @@
 // TODO: Use the siwf library instead of copying these types?
+// NOTE: The `siwf` types do not support 'Secp256k1' for `AlgorithmType`
 
 type CurveType = "Sr25519" | "Secp256k1";
 
@@ -38,6 +39,12 @@ export interface SiwfResponsePayloadLogin extends SiwfResponsePayloadBase {
   };
 }
 
+export interface AddProviderPayloadArguments extends Record<string, unknown> {
+  authorizedMsaId: string;
+  schemaIds: number[];
+  expiration: number;
+}
+
 export interface SiwfResponsePayloadAddProvider
   extends SiwfResponsePayloadBase {
   endpoint: {
@@ -45,11 +52,7 @@ export interface SiwfResponsePayloadAddProvider
     extrinsic: "createSponsoredAccountWithDelegation" | "grantDelegation";
   };
   type: "addProvider";
-  payload: {
-    authorizedMsaId: number;
-    schemaIds: number[];
-    expiration: number;
-  };
+  payload: AddProviderPayloadArguments;
 }
 
 export interface SiwfResponsePayloadItemActions
