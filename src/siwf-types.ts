@@ -1,6 +1,8 @@
 // TODO: Use the siwf library instead of copying these types?
 // NOTE: The `siwf` types do not support 'Secp256k1' for `AlgorithmType`
 
+import { HexString } from "@frequency-chain/ethereum-utils";
+
 type CurveType = "Sr25519" | "Secp256k1";
 
 type AlgorithmType = "SR25519" | "SECP256K1";
@@ -55,6 +57,16 @@ export interface SiwfResponsePayloadAddProvider
   payload: AddProviderPayloadArguments;
 }
 
+export interface ItemActionsPayloadArguments extends Record<string, unknown> {
+  schemaId: number;
+  targetHash: number;
+  expiration: number;
+  actions: {
+    type: "addItem";
+    payloadHex: HexString;
+  }[];
+}
+
 export interface SiwfResponsePayloadItemActions
   extends SiwfResponsePayloadBase {
   endpoint: {
@@ -62,15 +74,7 @@ export interface SiwfResponsePayloadItemActions
     extrinsic: "applyItemActionsWithSignatureV2";
   };
   type: "itemActions";
-  payload: {
-    schemaId: number;
-    targetHash: number;
-    expiration: number;
-    actions: {
-      type: "addItem";
-      payloadHex: string;
-    }[];
-  };
+  payload: ItemActionsPayloadArguments;
 }
 
 export interface SiwfResponsePayloadClaimHandle
