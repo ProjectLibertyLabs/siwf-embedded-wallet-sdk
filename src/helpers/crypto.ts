@@ -1,14 +1,9 @@
-import { x25519 } from '@noble/curves/ed25519.js';
-import { bytesToHex } from '@noble/curves/abstract/utils'
+import * as nacl from "tweetnacl"
 import { HexString } from '@frequency-chain/ethereum-utils';
-
+import { u8aToHex } from "@polkadot/util";
 
 export function generateGraphKeyPair(): { privateKey: HexString, publicKey: HexString } {
-  const privateKey = x25519.utils.randomPrivateKey()
-  const publicKey = x25519.getPublicKey(privateKey)
+  const keyPair = nacl.box.keyPair()
 
-  const encodedPrivateKeyValue: HexString = `0x${bytesToHex(privateKey)}`
-  const encodedPublicKeyValue: HexString = `0x${bytesToHex(publicKey)}`
-
-  return { privateKey: encodedPrivateKeyValue, publicKey: encodedPublicKeyValue }
+  return { privateKey: u8aToHex(keyPair.secretKey), publicKey: u8aToHex(keyPair.publicKey) }
 }
