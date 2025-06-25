@@ -1,7 +1,6 @@
-import { GatewayFetchFn } from "../index"
+import { GatewayFetchFn } from "../index";
 import { AccountResponse } from "../gateway-types.js";
 import { GatewayFetchError } from "../error-types.js";
-
 
 /**
  * Fetches a user's account information (if present) from Gateway Services
@@ -21,13 +20,16 @@ export async function getGatewayAccount(
   );
 
   if (response.ok) {
-    return await response.json() as AccountResponse;
+    return (await response.json()) as AccountResponse;
   } else {
     switch (response.status) {
       case 404:
         return null; // The user does not (yet) exist on chain
       default:
-        throw new GatewayFetchError("Failed GatewayFetchFn for GET Account", response);
+        throw new GatewayFetchError(
+          "Failed GatewayFetchFn for GET Account",
+          response,
+        );
     }
   }
 }
