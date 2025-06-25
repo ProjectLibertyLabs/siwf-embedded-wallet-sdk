@@ -57,7 +57,7 @@ export async function postGatewaySiwf(
   };
 }
 
-async function poll<T>(
+export async function poll<T>(
   fn: () => Promise<T>,
   delaySeconds: number, // Time between requests
   timeoutSeconds: number,
@@ -80,17 +80,8 @@ async function poll<T>(
     await new Promise((r) => setTimeout(r, delaySeconds * 1000));
   }
 
-  throw new Error(`[poll] Operation timed out after ${attempt} attempts over ${timeoutSeconds} seconds.`)
+  throw new Error(`Operation timed out after ${attempt} attempts over ${timeoutSeconds} seconds.`)
 }
-
-// const mockCreationGatewayAccount: AccountResponse = {
-//   msaId: "47",
-//   handle: {
-//     base_handle: "mock-siwf-ew",
-//     canonical_base: "m0ck-s1wf-ew",
-//     suffix: 0,
-//   },
-// };
 
 export async function pollForAccount(
   gatewayFetchFn: GatewayFetchFn,
