@@ -30,10 +30,7 @@ export interface EIP712Document {
 // https://eips.ethereum.org/EIPS/eip-712#specification-of-the-eth_signtypeddata-json-rpc
 export interface EIP712 {
   method: "eth_signTypedData_v4";
-  params: [
-    Address,
-    EIP712Document,
-  ];
+  params: [Address, EIP712Document];
 }
 
 // Matches https://docs.metamask.io/wallet/reference/provider-api/#request

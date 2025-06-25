@@ -13,50 +13,6 @@ export const mockCaip122 =
   "Issued At: 2024-10-29T19:17:27.077Z\n" +
   "Expiration Time: 2060-03-05T23:23:03.041Z";
 
-export const claimHandle712 = {
-  domain: {
-    chainId: "0x190f1b44",
-    name: "Frequency",
-    verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
-    version: "1",
-  },
-  message: {
-    expiration: 100,
-    handle: "mock-siwf-ew",
-  },
-  primaryType: "ClaimHandlePayload",
-  types: {
-    ClaimHandlePayload: [
-      {
-        name: "handle",
-        type: "string",
-      },
-      {
-        name: "expiration",
-        type: "uint32",
-      },
-    ],
-    EIP712Domain: [
-      {
-        name: "name",
-        type: "string",
-      },
-      {
-        name: "version",
-        type: "string",
-      },
-      {
-        name: "chainId",
-        type: "uint256",
-      },
-      {
-        name: "verifyingContract",
-        type: "address",
-      },
-    ],
-  },
-};
-
 export const addGraphKey712 = {
   domain: {
     chainId: "0x190f1b44",

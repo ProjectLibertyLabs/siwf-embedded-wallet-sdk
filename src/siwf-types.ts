@@ -47,6 +47,11 @@ export interface AddProviderPayloadArguments extends Record<string, unknown> {
   expiration: number;
 }
 
+export interface ClaimHandlePayloadArguments extends Record<string, unknown> {
+  baseHandle: string;
+  expiration: number;
+}
+
 export interface SiwfResponsePayloadAddProvider
   extends SiwfResponsePayloadBase {
   endpoint: {
@@ -65,6 +70,19 @@ export interface ItemActionsPayloadArguments extends Record<string, unknown> {
     type: "addItem";
     payloadHex: HexString;
   }[];
+}
+
+export interface SiwfResponsePayloadClaimHandle
+  extends SiwfResponsePayloadBase {
+  endpoint: {
+    pallet: "handles";
+    extrinsic: "claimHandle";
+  };
+  type: "claimHandle";
+  payload: {
+    baseHandle: string;
+    expiration: number;
+  };
 }
 
 export interface SiwfResponsePayloadItemActions
