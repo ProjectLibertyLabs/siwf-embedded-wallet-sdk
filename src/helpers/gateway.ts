@@ -88,7 +88,7 @@ export async function pollForAccount(
   userAddress: string,
   msaCreationCallbackFn: MsaCreationCallbackFn,
   requestDelaySeconds: number = 5,
-  timeoutSeconds: number = 600,
+  timeoutSeconds: number = 600, // 10 minutes
 ) {
   const response = await poll(
     async () => {
