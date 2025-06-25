@@ -11,6 +11,7 @@ import {
   mockCaip122,
 } from "./signature-requests.js";
 import { createSignedAddProviderPayload } from "./helpers/payloads.js";
+import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { getGatewayAccount } from "./helpers/gateway.js";
 import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 
@@ -67,7 +68,6 @@ async function pollForAccount(
   // MOCK Timeout
   await new Promise((r) => setTimeout(r, 12000));
   const _ignoreForMock = await getGatewayAccount(gatewayFetchFn, userAddress);
-
   msaCreationCallbackFn(mockCreationGatewayAccount);
 }
 
@@ -83,10 +83,14 @@ export async function startSiwf(
   // Is address already an MSA?
   const hasAccount = await getGatewayAccount(gatewayFetchFn, userAddress);
 
-  // TODO: Parse the encodedSiwfSignedRequest
-  // - Extract the provider Id
-  // - Extract the delegations
-  // - Check requests, etc...
+  const decodedSiwfSignedRequest = decodeSignedRequest(
+    encodedSiwfSignedRequest,
+  );
+  const providerAccount = await getGatewayAccount(
+    gatewayFetchFn,
+    decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue,
+  );
+  const _providerMsaId = providerAccount?.msaId;
 
   if (!hasAccount) {
     // Validate incoming values
