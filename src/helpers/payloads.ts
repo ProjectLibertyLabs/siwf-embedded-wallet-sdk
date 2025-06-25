@@ -3,7 +3,7 @@ import {
   getEip712BrowserRequestClaimHandlePayload,
   getEip712BrowserRequestItemizedSignaturePayloadV2,
   ItemizedAction
-} from "@frequency-chain/ethereum-utils"
+} from "@frequency-chain/ethereum-utils";
 import { EIP712Document, SignatureFn } from "../types";
 import {
   AddProviderPayloadArguments,
@@ -20,13 +20,15 @@ export async function createSignedAddProviderPayload(
   userAddress: string,
   signatureFn: SignatureFn,
   payloadArguments: AddProviderPayloadArguments,
-  extrinsic: "createSponsoredAccountWithDelegation" | "grantDelegation" = "createSponsoredAccountWithDelegation"
+  extrinsic:
+    | "createSponsoredAccountWithDelegation"
+    | "grantDelegation" = "createSponsoredAccountWithDelegation",
 ): Promise<SiwfResponsePayloadAddProvider> {
   const addProviderEip712 = getEip712BrowserRequestAddProvider(
     payloadArguments.authorizedMsaId,
     payloadArguments.schemaIds,
-    payloadArguments.expiration
-  ) as EIP712Document
+    payloadArguments.expiration,
+  ) as EIP712Document;
   const signature = await signatureFn({
     method: "eth_signTypedData_v4",
     params: [userAddress, addProviderEip712],
@@ -44,14 +46,18 @@ export async function createSignedAddProviderPayload(
     },
     type: "addProvider",
     payload: payloadArguments,
-  }
+  };
 }
 
-export async function createSignedClaimHandlePayload(userAddress: string, signatureFn: SignatureFn, payloadArguments: ClaimHandlePayloadArguments): Promise<SiwfResponsePayloadClaimHandle> {
+export async function createSignedClaimHandlePayload(
+  userAddress: string,
+  signatureFn: SignatureFn,
+  payloadArguments: ClaimHandlePayloadArguments,
+): Promise<SiwfResponsePayloadClaimHandle> {
   const claimHandleEip712 = getEip712BrowserRequestClaimHandlePayload(
-      payloadArguments.baseHandle,
-      payloadArguments.expiration
-  ) as EIP712Document
+    payloadArguments.baseHandle,
+    payloadArguments.expiration,
+  ) as EIP712Document;
   const signature = await signatureFn({
     method: "eth_signTypedData_v4",
     params: [userAddress, claimHandleEip712],
@@ -64,11 +70,11 @@ export async function createSignedClaimHandlePayload(userAddress: string, signat
       encodedValue: signature,
     },
     endpoint: {
-      pallet: 'handles',
-      extrinsic: 'claimHandle',
+      pallet: "handles",
+      extrinsic: "claimHandle",
     },
-    type: 'claimHandle',
-    payload: payloadArguments
+    type: "claimHandle",
+    payload: payloadArguments,
   };
 }
 export async function createSignedGraphKeyPayload(

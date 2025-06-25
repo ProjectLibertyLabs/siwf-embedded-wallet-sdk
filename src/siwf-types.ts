@@ -75,10 +75,10 @@ export interface ItemActionsPayloadArguments extends Record<string, unknown> {
 export interface SiwfResponsePayloadClaimHandle
   extends SiwfResponsePayloadBase {
   endpoint: {
-    pallet: 'handles';
-    extrinsic: 'claimHandle';
+    pallet: "handles";
+    extrinsic: "claimHandle";
   };
-  type: 'claimHandle';
+  type: "claimHandle";
   payload: {
     baseHandle: string;
     expiration: number;

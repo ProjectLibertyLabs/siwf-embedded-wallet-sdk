@@ -89,7 +89,7 @@ export async function startSiwf(
   );
 
   if (providerAccount === null) {
-    throw new Error("Unable to find provider account!")
+    throw new Error("Unable to find provider account!");
   }
 
   if (!hasAccount) {
@@ -105,7 +105,8 @@ export async function startSiwf(
     // Generate Recovery Key
 
     // Sign AddProvider
-    const requestedPermissions = decodedSiwfSignedRequest.requestedSignatures.payload.permissions
+    const requestedPermissions =
+      decodedSiwfSignedRequest.requestedSignatures.payload.permissions;
     const addProviderArguments = {
       authorizedMsaId: providerAccount.msaId,
       schemaIds: requestedPermissions,
@@ -115,14 +116,18 @@ export async function startSiwf(
       userAddress,
       signatureFn,
       addProviderArguments,
-    )
+    );
 
     // Sign Handle
     const claimHandleArguments: ClaimHandlePayloadArguments = {
       baseHandle: signUpHandle,
       expiration
     }
-    const _claimHandlePayload = await createSignedClaimHandlePayload(userAddress, signatureFn, claimHandleArguments)
+    const _claimHandlePayload = await createSignedClaimHandlePayload(
+        userAddress,
+        signatureFn,
+        claimHandleArguments,
+    );
 
     // Sign Graph Key Add
     const addGraphKeyArguments: ItemActionsPayloadArguments = {

@@ -1,50 +1,44 @@
 import { describe, it, expect } from "vitest";
 import { createSignedAddProviderPayload, createSignedClaimHandlePayload, createSignedGraphKeyPayload } from "./payloads";
 import { SiwfResponsePayloadAddProvider, SiwfResponsePayloadClaimHandle } from "../siwf-types";
-
+import { SignatureFn } from "../types";
 
 describe("createSignedAddProviderPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0x1234"
-    const signatureFn = async (_request) => "fake-signature"
+    const userAddress = "0x1234";
+    const signatureFn: SignatureFn = async (_request) => "fake-signature";
 
-    const payload: SiwfResponsePayloadAddProvider = await createSignedAddProviderPayload(
-      userAddress,
-      signatureFn,
-      {
-        authorizedMsaId: 1n,
+    const payload: SiwfResponsePayloadAddProvider =
+      await createSignedAddProviderPayload(userAddress, signatureFn, {
+        authorizedMsaId: "1",
         schemaIds: [8, 9, 10, 15],
         expiration: 100,
-      },
-    )
+      });
 
-    expect(payload).toMatchSnapshot()
+    expect(payload).toMatchSnapshot();
   });
 });
 
 describe("createSignedAddProviderPayload", () => {
-    it("returns the correct payload", async () => {
-        const userAddress = "0x1234"
-      const baseHandle = "Alice"
-      const signatureFn = async (_request) => "fake-signature"
+  it("returns the correct payload", async () => {
+    const userAddress = "0x1234";
+    const baseHandle = "Alice";
+    const signatureFn: SignatureFn = async (_request) => "fake-signature";
 
-    const payload: SiwfResponsePayloadClaimHandle = await createSignedClaimHandlePayload(
-      userAddress,
-      signatureFn,
-      {
+    const payload: SiwfResponsePayloadClaimHandle =
+      await createSignedClaimHandlePayload(userAddress, signatureFn, {
         baseHandle,
-        expiration: 100
-      },
-    )
+        expiration: 100,
+      });
 
-    expect(payload).toMatchSnapshot()
+    expect(payload).toMatchSnapshot();
   });
 });
 
 describe("createSignedGraphKeyPayload", () => {
   it("returns the correct payload", async () => {
     const userAddress = "0x1234"
-    const signatureFn = async (_request) => "fake-signature-for-graph"
+    const signatureFn: SignatureFn = async (_request) => "fake-signature-for-graph"
 
     const payload: SiwfResponsePayloadAddProvider = await createSignedGraphKeyPayload(
       userAddress,
