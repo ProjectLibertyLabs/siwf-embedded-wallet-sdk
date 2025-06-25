@@ -2,6 +2,7 @@
 // NOTE: The `siwf` types do not support 'Secp256k1' for `AlgorithmType`
 
 import { HexString } from "@frequency-chain/ethereum-utils";
+import { createSignedLogInPayload } from "./helpers/payloads";
 
 type CurveType = "Sr25519" | "Secp256k1";
 
@@ -47,11 +48,6 @@ export interface AddProviderPayloadArguments extends Record<string, unknown> {
   expiration: number;
 }
 
-export interface ClaimHandlePayloadArguments extends Record<string, unknown> {
-  baseHandle: string;
-  expiration: number;
-}
-
 export interface SiwfResponsePayloadAddProvider
   extends SiwfResponsePayloadBase {
   endpoint: {
@@ -72,19 +68,6 @@ export interface ItemActionsPayloadArguments extends Record<string, unknown> {
   }[];
 }
 
-export interface SiwfResponsePayloadClaimHandle
-  extends SiwfResponsePayloadBase {
-  endpoint: {
-    pallet: "handles";
-    extrinsic: "claimHandle";
-  };
-  type: "claimHandle";
-  payload: {
-    baseHandle: string;
-    expiration: number;
-  };
-}
-
 export interface SiwfResponsePayloadItemActions
   extends SiwfResponsePayloadBase {
   endpoint: {
@@ -93,6 +76,11 @@ export interface SiwfResponsePayloadItemActions
   };
   type: "itemActions";
   payload: ItemActionsPayloadArguments;
+}
+
+export interface ClaimHandlePayloadArguments extends Record<string, unknown> {
+  baseHandle: string;
+  expiration: number;
 }
 
 export interface SiwfResponsePayloadClaimHandle
@@ -113,6 +101,16 @@ export type SiwfResponsePayload =
   | SiwfResponsePayloadItemActions
   | SiwfResponsePayloadClaimHandle
   | SiwfResponsePayloadBase;
+
+export interface CreateSignedLogInPayloadArguments
+  extends Record<string, unknown> {
+  domain: string;
+  uri: string;
+  version: string;
+  chainId: string;
+  nonce?: string;
+  issuedAt?: string;
+}
 
 interface SiwfResponseCredentialBase {
   "@context": [

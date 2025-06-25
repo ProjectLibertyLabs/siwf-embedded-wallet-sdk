@@ -1,6 +1,7 @@
 import { GatewaySiwfResponse } from "./gateway-types.js";
 import {
   ClaimHandlePayloadArguments,
+  CreateSignedLogInPayloadArguments,
   ItemActionsPayloadArguments,
 } from "./siwf-types.js";
 import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
@@ -12,6 +13,7 @@ import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
+  createSignedLogInPayload,
 } from "./helpers/payloads.js";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import {
@@ -127,11 +129,20 @@ export async function startSiwf(
   } else {
     // Process Login
 
-    // Request CAIP-122 Signature
-    const _ignoreForMockCaip122Signature = await signatureFn({
-      method: "personal_sign",
-      params: [userAddress, mockCaip122],
-    });
+    // TODO: help get the correct values below
+    const loginPayloadArguments: CreateSignedLogInPayloadArguments = {
+      domain: decodedSiwfSignedRequest.applicationContext?.url ?? "",
+      uri: decodedSiwfSignedRequest.requestedSignatures.payload.callback,
+      version: "1",
+      nonce: "1",
+      chainId: "123",
+      issuedAt: JSON.stringify(new Date()),
+    };
+    const _signedLoginSiwfResponse = createSignedLogInPayload(
+      userAddress,
+      signatureFn,
+      loginPayloadArguments,
+    );
 
     // TODO: Build the mock siwfResponse
     const siwfResponse = mockLoginResponse();

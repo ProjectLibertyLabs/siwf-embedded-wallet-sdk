@@ -69,3 +69,25 @@ exports[`createSignedGraphKeyPayload > returns the correct payload 1`] = `
   "type": "itemActions",
 }
 `;
+
+exports[`createSignedLogInPayload > returns the correct payload 1`] = `
+{
+  "payload": {
+    "message": "text
+    your-app.com wants you to sign in with your Frequency account:0x1234
+    
+    URI: https://your-app.com/signin/callback
+    Version: 1
+    Nonce: N6rLwqyz34oUxJEXJ
+    Chain ID: frequency:123
+    Issued At: 2024-10-29T19:17:27.077Z
+  ",
+  },
+  "signature": {
+    "algo": "SECP256K1",
+    "encodedValue": "fake-signature-for-graph",
+    "encoding": "base16",
+  },
+  "type": "login",
+}
+`;

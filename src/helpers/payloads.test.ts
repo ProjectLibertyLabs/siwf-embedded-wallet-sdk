@@ -3,8 +3,10 @@ import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
+  createSignedLogInPayload,
 } from "./payloads";
 import {
+  CreateSignedLogInPayloadArguments,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
@@ -64,6 +66,30 @@ describe("createSignedGraphKeyPayload", () => {
         ],
       },
     );
+
+    expect(payload).toMatchSnapshot();
+  });
+});
+
+describe("createSignedLogInPayload", () => {
+  it("returns the correct payload", async () => {
+    const userAddress = "0x1234";
+    const signatureFn: SignatureFn = async () => "fake-signature-for-graph";
+    const mockLoginPayloadArguments: CreateSignedLogInPayloadArguments = {
+      domain: "your-app.com",
+      uri: "https://your-app.com/signin/callback",
+      version: "1",
+      nonce: "N6rLwqyz34oUxJEXJ",
+      chainId: "123",
+      issuedAt: "2024-10-29T19:17:27.077Z",
+    };
+
+    const payload: SiwfResponsePayloadItemActions =
+      await createSignedLogInPayload(
+        userAddress,
+        signatureFn,
+        mockLoginPayloadArguments,
+      );
 
     expect(payload).toMatchSnapshot();
   });
