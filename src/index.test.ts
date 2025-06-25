@@ -6,11 +6,11 @@ describe("Basic startSiwf test", () => {
     const resp = await startSiwf(
       "0xabcd",
       async () => "0xdef0",
-      async () => ({ ok: true, json: () => ({}) }) as Response,
+      async () => ({ ok: true, status: 200, json: async () => ({ "msaId": "290" }) }) as Response,
       "",
       "handle-here",
       "email@example.com",
-      () => {},
+      () => { },
     );
     expect(resp).toMatchSnapshot();
   });

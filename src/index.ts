@@ -11,7 +11,7 @@ import {
   mockCaip122,
 } from "./signature-requests.js";
 import { createSignedAddProviderPayload } from "./helpers/payloads.js";
-
+import { getGatewayAccount } from "./helpers/gateway.js";
 
 type Address = string;
 
@@ -110,24 +110,6 @@ let mockCreationGatewayAccount: AccountResponse = {
 
 export function setMockForCreationGatewayAccount(mockValue: AccountResponse) {
   mockCreationGatewayAccount = mockValue;
-}
-
-async function getGatewayAccount(
-  gatewayFetchFn: GatewayFetchFn,
-  userAddress: string,
-): Promise<AccountResponse | null> {
-  const response = await gatewayFetchFn(
-    "GET",
-    `/v1/accounts/account/${userAddress}`,
-  );
-
-  if (response.ok) {
-    const _ignoredBody = response.json();
-    return mockExistingGatewayAccount;
-  }
-
-  // TODO: These errors should be typed to match the real SDK
-  throw new Error("Failed GatewayFetchFn for GET Account");
 }
 
 async function postGatewaySiwf(
