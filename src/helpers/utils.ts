@@ -13,14 +13,15 @@ export function isHexString(value: string): value is HexString {
   return isHex && value.length % 2 === 0;
 }
 
-// Con
+// Converts an SS58-encoded 'universal' frequency address into a checksum (EIP-55)
+// encoded ethereum address.
 export function convertSS58AddressToEthereum<T extends { controlKey: string }>(
-  input: T,
+  objectContainingControlKey: T,
 ): T {
-  const ethereumAddress = ethers.getAddress(u8aToHex(addressToEvm(input.controlKey)))
+  const ethereumAddress = ethers.getAddress(u8aToHex(addressToEvm(objectContainingControlKey.controlKey)))
 
   return {
-    ...input,
+    ...objectContainingControlKey,
     controlKey: ethereumAddress,
   };
 }
