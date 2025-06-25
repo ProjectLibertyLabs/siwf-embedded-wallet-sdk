@@ -7,6 +7,7 @@ import {
 import {
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
+  SiwfResponsePayloadItemActions,
 } from "../siwf-types";
 import { SignatureFn } from "../types";
 
@@ -45,8 +46,7 @@ describe("createSignedClaimHandlePayload", () => {
 describe("createSignedGraphKeyPayload", () => {
   it("returns the correct payload", async () => {
     const userAddress = "0x1234";
-    const signatureFn: SignatureFn = async (_request) =>
-      "fake-signature-for-graph";
+    const signatureFn: SignatureFn = async () => "fake-signature-for-graph";
 
     const payload = await createSignedGraphKeyPayload(
       userAddress,

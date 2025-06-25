@@ -1,6 +1,8 @@
-import { GatewayFetchFn } from "../types";
-import { AccountResponse } from "../gateway-types.js";
+import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
+import { AccountResponse, GatewaySiwfResponse } from "../gateway-types.js";
 import { GatewayFetchError } from "../error-types.js";
+import { stringToBase64URL } from "src/base64url";
+import { SiwfResponse } from "src/siwf-types";
 
 /**
  * Fetches a user's account information (if present) from Gateway Services
@@ -32,4 +34,74 @@ export async function getGatewayAccount(
         );
     }
   }
+}
+
+export async function postGatewaySiwf(
+  gatewayFetchFn: GatewayFetchFn,
+  siwfResponse: SiwfResponse,
+): Promise<GatewaySiwfResponse> {
+  const response = await gatewayFetchFn("POST", "/v2/accounts/siwf", {
+    authorizationPayload: stringToBase64URL(JSON.stringify(siwfResponse)),
+  });
+
+  if (response.ok) {
+    const parsedResponse = response.json();
+    return parsedResponse;
+  } else {
+    throw new GatewayFetchError(
+      "Failed GatewayFetchFn for POST siwf",
+      response,
+    );
+  }
+}
+
+export async function poll<T>(
+  fn: () => Promise<T>,
+  delaySeconds: number, // Time between requests
+  timeoutSeconds: number,
+  epochMillisSupplier: () => number = Date.now,
+): Promise<T> {
+  let attempt = 0;
+  const startEpochMillis = epochMillisSupplier();
+  const timeoutEpochMillies = startEpochMillis + timeoutSeconds * 1000;
+
+  while (epochMillisSupplier() < timeoutEpochMillies) {
+    attempt++;
+
+    try {
+      const result = await fn();
+      return result;
+    } catch (e: unknown) {
+      console.log(`[poll] Attempt ${attempt} failed: ${e}`);
+    }
+
+    await new Promise((r) => setTimeout(r, delaySeconds * 1000));
+  }
+
+  throw new Error(
+    `Operation timed out after ${attempt} attempts over ${timeoutSeconds} seconds.`,
+  );
+}
+
+export async function pollForAccount(
+  gatewayFetchFn: GatewayFetchFn,
+  userAddress: string,
+  msaCreationCallbackFn: MsaCreationCallbackFn,
+  requestDelaySeconds: number = 5,
+  timeoutSeconds: number = 600, // 10 minutes
+) {
+  const response = await poll(
+    async () => {
+      const account = await getGatewayAccount(gatewayFetchFn, userAddress);
+      if (account === null) {
+        throw Error("Account does not (yet) exist.");
+      } else {
+        return account;
+      }
+    },
+    requestDelaySeconds,
+    timeoutSeconds,
+  );
+
+  msaCreationCallbackFn(response);
 }
