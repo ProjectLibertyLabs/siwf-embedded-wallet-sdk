@@ -12,68 +12,7 @@ import {
 } from "./signature-requests.js";
 import { createSignedAddProviderPayload } from "./helpers/payloads.js";
 import { getGatewayAccount } from "./helpers/gateway.js";
-
-type Address = string;
-
-// https://chainagnostic.org/CAIPs/caip-122
-interface CAIP122 {
-  method: "personal_sign";
-  params: [
-    Address,
-    string, // Signing Payload
-  ];
-}
-
-export interface EIP712Document {
-  types: {
-    EIP712Domain: { name: string; type: string }[];
-    [key: string]: { name: string; type: string }[];
-  };
-  primaryType: string;
-  domain: {
-    name: string;
-    version: string;
-    chainId: string;
-    verifyingContract: string;
-  };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  message: Record<string, any>;
-}
-
-// https://eips.ethereum.org/EIPS/eip-712#specification-of-the-eth_signtypeddata-json-rpc
-export interface EIP712 {
-  method: "eth_signTypedData_v4";
-  params: [
-    Address,
-    EIP712Document,
-  ];
-}
-
-// Matches https://docs.metamask.io/wallet/reference/provider-api/#request
-export type SignatureFn = (request: CAIP122 | EIP712) => Promise<string>;
-
-interface GatewayFetchBody {
-  authorizationPayload: string;
-}
-
-export type GatewayFetchPostSiwfFn = (
-  method: "POST",
-  path: "/v2/accounts/siwf",
-  body: GatewayFetchBody,
-) => Promise<Response>;
-
-export type GatewayFetchGetAccountFn = (
-  method: "GET",
-  path: `/v1/accounts/account/${Address}`,
-) => Promise<Response>;
-
-export type GatewayFetchFn = (
-  method: "GET" | "POST",
-  path: `/v1/accounts/account/${Address}` | "/v2/accounts/siwf",
-  body?: GatewayFetchBody,
-) => Promise<Response>;
-
-export type MsaCreationCallbackFn = (account: AccountResponse) => void;
+import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 
 // This is mocked as we only deal with converting one control key
 function convertControlKeyToEthereum<T extends { controlKey: string }>(
@@ -87,15 +26,6 @@ function convertControlKeyToEthereum<T extends { controlKey: string }>(
     ...input,
     controlKey: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
   };
-}
-
-// Mock so that the existing account is returned
-let mockExistingGatewayAccount: null | AccountResponse = null;
-
-export function setMockForExistingGatewayAccount(
-  mockValue: null | AccountResponse,
-) {
-  mockExistingGatewayAccount = mockValue;
 }
 
 // Mock for post MSA Creation
