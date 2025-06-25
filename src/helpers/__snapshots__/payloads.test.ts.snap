@@ -25,6 +25,25 @@ exports[`createSignedAddProviderPayload > returns the correct payload 1`] = `
 }
 `;
 
+exports[`createSignedClaimHandlePayload > returns the correct payload 1`] = `
+{
+  "endpoint": {
+    "extrinsic": "claimHandle",
+    "pallet": "handles",
+  },
+  "payload": {
+    "baseHandle": "Alice",
+    "expiration": 100,
+  },
+  "signature": {
+    "algo": "SECP256K1",
+    "encodedValue": "fake-signature",
+    "encoding": "base16",
+  },
+  "type": "claimHandle",
+}
+`;
+
 exports[`createSignedGraphKeyPayload > returns the correct payload 1`] = `
 {
   "endpoint": {

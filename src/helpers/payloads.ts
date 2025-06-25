@@ -2,7 +2,7 @@ import {
   getEip712BrowserRequestAddProvider,
   getEip712BrowserRequestClaimHandlePayload,
   getEip712BrowserRequestItemizedSignaturePayloadV2,
-  ItemizedAction
+  ItemizedAction,
 } from "@frequency-chain/ethereum-utils";
 import { EIP712Document, SignatureFn } from "../types";
 import {
@@ -11,10 +11,9 @@ import {
   ItemActionsPayloadArguments,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
-  SiwfResponsePayloadItemActions
+  SiwfResponsePayloadItemActions,
 } from "src/siwf-types";
 import { isHexString } from "./utils";
-
 
 export async function createSignedAddProviderPayload(
   userAddress: string,
@@ -82,21 +81,23 @@ export async function createSignedGraphKeyPayload(
   signatureFn: SignatureFn,
   payloadArguments: ItemActionsPayloadArguments,
 ): Promise<SiwfResponsePayloadItemActions> {
-  const actions: ItemizedAction[] = payloadArguments.actions.map(({ payloadHex }) => {
-    if (isHexString(payloadHex)) {
-      return {
-        actionType: 'Add',
-        data: payloadHex,
-        index: 0,
-      }
-    } else throw new Error(`Expected HexString: ${payloadHex}`)
-  })
+  const actions: ItemizedAction[] = payloadArguments.actions.map(
+    ({ payloadHex }) => {
+      if (isHexString(payloadHex)) {
+        return {
+          actionType: "Add",
+          data: payloadHex,
+          index: 0,
+        };
+      } else throw new Error(`Expected HexString: ${payloadHex}`);
+    },
+  );
   const addItemsEip712 = getEip712BrowserRequestItemizedSignaturePayloadV2(
     payloadArguments.schemaId,
     payloadArguments.targetHash,
     payloadArguments.expiration,
     actions,
-  ) as EIP712Document
+  ) as EIP712Document;
   const signature = await signatureFn({
     method: "eth_signTypedData_v4",
     params: [userAddress, addItemsEip712],
@@ -114,5 +115,5 @@ export async function createSignedGraphKeyPayload(
     },
     type: "itemActions",
     payload: payloadArguments,
-  }
+  };
 }
