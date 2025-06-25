@@ -139,6 +139,7 @@ dist
 
 # Webstorm idea directory
 .idea/
+.idea/*
 
 # generated .d type files
 *.d.ts
