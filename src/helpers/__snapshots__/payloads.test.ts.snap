@@ -24,3 +24,29 @@ exports[`createSignedAddProviderPayload > returns the correct payload 1`] = `
   "type": "addProvider",
 }
 `;
+
+exports[`createSignedGraphKeyPayload > returns the correct payload 1`] = `
+{
+  "endpoint": {
+    "extrinsic": "applyItemActionsWithSignatureV2",
+    "pallet": "statefulStorage",
+  },
+  "payload": {
+    "actions": [
+      {
+        "payloadHex": "0x40a6836ea489047852d3f0297f8fe8ad6779793af4e9c6274c230c207b9b825026",
+        "type": "addItem",
+      },
+    ],
+    "expiration": 100,
+    "schemaId": 7,
+    "targetHash": 0,
+  },
+  "signature": {
+    "algo": "SECP256K1",
+    "encodedValue": "fake-signature-for-graph",
+    "encoding": "base16",
+  },
+  "type": "itemActions",
+}
+`;
