@@ -48,8 +48,10 @@ describe("createSignedGraphKeyPayload", () => {
     const signatureFn: SignatureFn = async (_request) =>
       "fake-signature-for-graph";
 
-    const payload: SiwfResponsePayloadAddProvider =
-      await createSignedGraphKeyPayload(userAddress, signatureFn, {
+    const payload = await createSignedGraphKeyPayload(
+      userAddress,
+      signatureFn,
+      {
         schemaId: 7,
         targetHash: 0,
         expiration: 100,
@@ -60,7 +62,8 @@ describe("createSignedGraphKeyPayload", () => {
               "0x40a6836ea489047852d3f0297f8fe8ad6779793af4e9c6274c230c207b9b825026",
           },
         ],
-      });
+      },
+    );
 
     expect(payload).toMatchSnapshot();
   });

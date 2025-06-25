@@ -21,7 +21,6 @@ import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 import { generateGraphKeyPair } from "./helpers/crypto.js";
 import { convertSS58AddressToEthereum } from "./helpers/utils.js";
 
-
 // Mock for post MSA Creation
 let mockCreationGatewayAccount: AccountResponse = {
   msaId: "47",

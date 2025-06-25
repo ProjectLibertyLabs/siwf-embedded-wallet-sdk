@@ -1,7 +1,7 @@
 import { HexString } from "@frequency-chain/ethereum-utils";
 import { u8aToHex } from "@polkadot/util";
-import { addressToEvm } from "@polkadot/util-crypto"
-import { ethers } from "ethers"
+import { addressToEvm } from "@polkadot/util-crypto";
+import { ethers } from "ethers";
 
 /**
  * Validate that a string is a valid hex string
@@ -18,7 +18,9 @@ export function isHexString(value: string): value is HexString {
 export function convertSS58AddressToEthereum<T extends { controlKey: string }>(
   objectContainingControlKey: T,
 ): T {
-  const ethereumAddress = ethers.getAddress(u8aToHex(addressToEvm(objectContainingControlKey.controlKey)))
+  const ethereumAddress = ethers.getAddress(
+    u8aToHex(addressToEvm(objectContainingControlKey.controlKey)),
+  );
 
   return {
     ...objectContainingControlKey,
