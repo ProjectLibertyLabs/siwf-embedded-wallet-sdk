@@ -1,5 +1,5 @@
 import { getEip712BrowserRequestAddProvider } from "@frequency-chain/ethereum-utils"
-import { EIP712Document, SignatureFn } from "../";
+import { EIP712Document, SignatureFn } from "../types";
 import { AddProviderPayloadArguments, SiwfResponsePayloadAddProvider } from "src/siwf-types";
 
 

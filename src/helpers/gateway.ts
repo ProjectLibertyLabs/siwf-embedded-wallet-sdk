@@ -1,4 +1,4 @@
-import { GatewayFetchFn } from "../index"
+import { GatewayFetchFn } from "../types"
 import { AccountResponse } from "../gateway-types.js";
 import { GatewayFetchError } from "../error-types.js";
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { GatewayFetchFn } from "../index";
+import { GatewayFetchFn } from "../types";
 import { AccountResponse } from "../gateway-types";
 import { GatewayFetchError } from "../error-types";
 import { getGatewayAccount } from "./gateway"
