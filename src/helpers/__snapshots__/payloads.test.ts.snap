@@ -18,7 +18,7 @@ exports[`createSignedAddProviderPayload > returns the correct payload 1`] = `
   },
   "signature": {
     "algo": "SECP256K1",
-    "encodedValue": "fake-signature",
+    "encodedValue": "0x891f07a77f1e52d0610ef518084a4cb29669ea9bfd3b28641ba75d29581f72191f7f1a55aeae7d79be7dd29ed05292574687cb1902aa617bf09609e7eb6ccb8d1c",
     "encoding": "base16",
   },
   "type": "addProvider",
@@ -37,7 +37,7 @@ exports[`createSignedClaimHandlePayload > returns the correct payload 1`] = `
   },
   "signature": {
     "algo": "SECP256K1",
-    "encodedValue": "fake-signature",
+    "encodedValue": "0x832d1f6870118f5fc6e3cc314152b87dc452bd607581f16b1e39142b553260f8397e80c9f7733aecf1bd46d4e84ad333c648e387b069fa93b4b1ca4fa0fd406b1c",
     "encoding": "base16",
   },
   "type": "claimHandle",
@@ -63,7 +63,7 @@ exports[`createSignedGraphKeyPayload > returns the correct payload 1`] = `
   },
   "signature": {
     "algo": "SECP256K1",
-    "encodedValue": "fake-signature-for-graph",
+    "encodedValue": "0x66f362d1b72de80760fc90f2ca4516a1286c081313f4017027af5cce9391902d239a8f1464f56761568e9556f8d9a5bb3eb264e04268eb7617915592d6eeed431c",
     "encoding": "base16",
   },
   "type": "itemActions",
@@ -89,7 +89,7 @@ exports[`createSignedLogInPayload > returns the correct payload 1`] = `
   },
   "signature": {
     "algo": "SECP256K1",
-    "encodedValue": "fake-signature-for-graph",
+    "encodedValue": "0x1c79df5078d6055ea327e3dfa0afd369de3b418f8d59b26b668a27bd4188afe74ba5e1f9d9018e00d05d5c7fdafe0bbb4017f6dad29c712618c690c58eb891681b",
     "encoding": "base16",
   },
   "type": "login",
