@@ -126,13 +126,16 @@ export async function createSignedLogInPayload(
   signatureFn: SignatureFn,
   payloadArguments: CreateSignedLogInPayloadArguments,
 ): Promise<any> {
-  const loginCaip122 = `text
-    ${payloadArguments.domain} wants you to sign in with your Frequency account:${userAddress}
+  const loginCaip122 = `${payloadArguments.domain} wants you to sign in with your Frequency account:
+    frequency:${payloadArguments.chainId}:${userAddress}
     
-    URI: ${payloadArguments.uri}
+    {{#showStatement}}{{statement}}
+    
+    
+    {{/showStatement}}URI: ${payloadArguments.uri}
     Version: ${payloadArguments.version}
     Nonce: ${payloadArguments.nonce}
-    Chain ID: frequency:${payloadArguments.chainId}
+    Chain ID: frequency:${payloadArguments.chainReference}
     Issued At: ${payloadArguments.issuedAt}
   `;
   const signature = await signatureFn({
@@ -141,6 +144,12 @@ export async function createSignedLogInPayload(
   });
 
   return {
+    userPublicKey: {
+      encodedValue: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+      encoding: "base16",
+      format: "eip-55",
+      type: "Secp256k1",
+    },
     signature: {
       algo: "SECP256K1",
       encoding: "base16",
@@ -150,5 +159,6 @@ export async function createSignedLogInPayload(
     payload: {
       message: loginCaip122,
     },
+    credentials: [],
   };
 }

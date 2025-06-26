@@ -8,7 +8,6 @@ import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
 import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
 import { mockGatewayLoginResponse } from "./static-mocks/gateway-login.js";
-import { mockCaip122 } from "./signature-requests.js";
 import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
@@ -24,6 +23,21 @@ import {
 import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 import { generateGraphKeyPair } from "./helpers/crypto.js";
 import { convertSS58AddressToEthereum } from "./helpers/utils.js";
+import { v4 as generateRandomUuid } from "uuid";
+
+// This is mocked as we only deal with converting one control key
+function convertControlKeyToEthereum<T extends { controlKey: string }>(
+  input: T,
+): T {
+  if (input.controlKey !== "f6d1YDa4agkaQ5Kqq8ZKwCf2Ew8UFz9ot2JNrBwHsFkhdtHEn")
+    throw new Error(
+      "Mock only supports f6d1YDa4agkaQ5Kqq8ZKwCf2Ew8UFz9ot2JNrBwHsFkhdtHEn",
+    );
+  return {
+    ...input,
+    controlKey: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+  };
+}
 
 export async function startSiwf(
   userAddress: string,
@@ -128,14 +142,16 @@ export async function startSiwf(
     return convertSS58AddressToEthereum(mockGatewayNewUserResponse());
   } else {
     // Process Login
-
-    // TODO: help get the correct values below
     const loginPayloadArguments: CreateSignedLogInPayloadArguments = {
-      domain: decodedSiwfSignedRequest.applicationContext?.url ?? "",
+      domain: new URL(
+        decodedSiwfSignedRequest.requestedSignatures.payload.callback,
+      ).hostname,
       uri: decodedSiwfSignedRequest.requestedSignatures.payload.callback,
       version: "1",
-      nonce: "1",
-      chainId: "123",
+      nonce: generateRandomUuid(),
+      chainId:
+        "0x4a587bf17a404e3572747add7aab7bbe56e805a5479c6c436f07f36fcc8d3ae1", //hardcoded mainnet
+      // when we implement get Block Info, the genesis will be in that object. use that value here.
       issuedAt: JSON.stringify(new Date()),
     };
     const _signedLoginSiwfResponse = createSignedLogInPayload(
