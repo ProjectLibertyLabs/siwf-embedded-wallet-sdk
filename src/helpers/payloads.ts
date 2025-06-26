@@ -2,7 +2,6 @@ import {
   getEip712BrowserRequestAddProvider,
   getEip712BrowserRequestClaimHandlePayload,
   getEip712BrowserRequestItemizedSignaturePayloadV2,
-  getEip712BrowserRequestSiwfSignedRequestPayload,
   ItemizedAction,
 } from "@frequency-chain/ethereum-utils";
 import { EIP712Document, SignatureFn } from "../types";
@@ -14,9 +13,10 @@ import {
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
+  SiwfResponsePayloadLogin,
 } from "src/siwf-types";
 import { isHexString } from "./utils";
-import { mockCaip122 } from "../signature-requests";
+import { ethers } from "ethers";
 
 export async function createSignedAddProviderPayload(
   userAddress: string,
@@ -125,7 +125,7 @@ export async function createSignedLogInPayload(
   userAddress: string,
   signatureFn: SignatureFn,
   payloadArguments: CreateSignedLogInPayloadArguments,
-): Promise<any> {
+): Promise<SiwfResponsePayloadLogin> {
   const loginCaip122 = `${payloadArguments.domain} wants you to sign in with your Frequency account:
     frequency:${payloadArguments.chainId}:${userAddress}
     
@@ -138,6 +138,7 @@ export async function createSignedLogInPayload(
     Chain ID: frequency:${payloadArguments.chainReference}
     Issued At: ${payloadArguments.issuedAt}
   `;
+
   const signature = await signatureFn({
     method: "personal_sign",
     params: [userAddress, loginCaip122],
@@ -145,7 +146,7 @@ export async function createSignedLogInPayload(
 
   return {
     userPublicKey: {
-      encodedValue: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+      encodedValue: ethers.getAddress(userAddress),
       encoding: "base16",
       format: "eip-55",
       type: "Secp256k1",

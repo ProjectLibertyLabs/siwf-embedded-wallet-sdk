@@ -10,12 +10,13 @@ import {
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
+  SiwfResponsePayloadLogin,
 } from "../siwf-types";
 import { SignatureFn } from "../types";
 
 describe("createSignedAddProviderPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0x1234";
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const signatureFn: SignatureFn = async (_request) => "fake-signature";
 
     const payload: SiwfResponsePayloadAddProvider =
@@ -31,7 +32,7 @@ describe("createSignedAddProviderPayload", () => {
 
 describe("createSignedClaimHandlePayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0x1234";
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const baseHandle = "Alice";
     const signatureFn: SignatureFn = async (_request) => "fake-signature";
 
@@ -47,7 +48,7 @@ describe("createSignedClaimHandlePayload", () => {
 
 describe("createSignedGraphKeyPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0x1234";
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const signatureFn: SignatureFn = async () => "fake-signature-for-graph";
 
     const payload = await createSignedGraphKeyPayload(
@@ -73,7 +74,7 @@ describe("createSignedGraphKeyPayload", () => {
 
 describe("createSignedLogInPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0x1234";
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const signatureFn: SignatureFn = async () => "fake-signature-for-graph";
     const mockLoginPayloadArguments: CreateSignedLogInPayloadArguments = {
       domain: "your-app.com",
@@ -84,12 +85,11 @@ describe("createSignedLogInPayload", () => {
       issuedAt: "2024-10-29T19:17:27.077Z",
     };
 
-    const payload: SiwfResponsePayloadItemActions =
-      await createSignedLogInPayload(
-        userAddress,
-        signatureFn,
-        mockLoginPayloadArguments,
-      );
+    const payload: SiwfResponsePayloadLogin = await createSignedLogInPayload(
+      userAddress,
+      signatureFn,
+      mockLoginPayloadArguments,
+    );
 
     expect(payload).toMatchSnapshot();
   });

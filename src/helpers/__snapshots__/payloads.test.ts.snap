@@ -72,14 +72,18 @@ exports[`createSignedGraphKeyPayload > returns the correct payload 1`] = `
 
 exports[`createSignedLogInPayload > returns the correct payload 1`] = `
 {
+  "credentials": [],
   "payload": {
-    "message": "text
-    your-app.com wants you to sign in with your Frequency account:0x1234
+    "message": "your-app.com wants you to sign in with your Frequency account:
+    frequency:123:0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
     
-    URI: https://your-app.com/signin/callback
+    {{#showStatement}}{{statement}}
+    
+    
+    {{/showStatement}}URI: https://your-app.com/signin/callback
     Version: 1
     Nonce: N6rLwqyz34oUxJEXJ
-    Chain ID: frequency:123
+    Chain ID: frequency:undefined
     Issued At: 2024-10-29T19:17:27.077Z
   ",
   },
@@ -89,5 +93,11 @@ exports[`createSignedLogInPayload > returns the correct payload 1`] = `
     "encoding": "base16",
   },
   "type": "login",
+  "userPublicKey": {
+    "encodedValue": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+    "encoding": "base16",
+    "format": "eip-55",
+    "type": "Secp256k1",
+  },
 }
 `;

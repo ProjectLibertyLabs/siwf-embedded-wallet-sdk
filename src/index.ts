@@ -25,20 +25,6 @@ import { generateGraphKeyPair } from "./helpers/crypto.js";
 import { convertSS58AddressToEthereum } from "./helpers/utils.js";
 import { v4 as generateRandomUuid } from "uuid";
 
-// This is mocked as we only deal with converting one control key
-function convertControlKeyToEthereum<T extends { controlKey: string }>(
-  input: T,
-): T {
-  if (input.controlKey !== "f6d1YDa4agkaQ5Kqq8ZKwCf2Ew8UFz9ot2JNrBwHsFkhdtHEn")
-    throw new Error(
-      "Mock only supports f6d1YDa4agkaQ5Kqq8ZKwCf2Ew8UFz9ot2JNrBwHsFkhdtHEn",
-    );
-  return {
-    ...input,
-    controlKey: "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
-  };
-}
-
 export async function startSiwf(
   userAddress: string,
   signatureFn: SignatureFn,

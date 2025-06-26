@@ -4,7 +4,7 @@ import { startSiwf } from "./index.js";
 describe("Basic startSiwf test", () => {
   it("Can do a thing", async () => {
     const resp = await startSiwf(
-      "0xabcd",
+      "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
       async () => "0xdef0",
       async () =>
         ({
