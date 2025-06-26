@@ -3,18 +3,21 @@ import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
+  createSignedLogInPayload,
 } from "./payloads";
 import {
+  CreateSignedLogInPayloadArguments,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
+  SiwfResponsePayloadLogin,
 } from "../siwf-types";
-import { SignatureFn } from "../types";
+import { TEST_SIGNATURE_FN } from "../static-mocks/test-signature-fn.js";
 
 describe("createSignedAddProviderPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0x1234";
-    const signatureFn: SignatureFn = async (_request) => "fake-signature";
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+    const signatureFn = TEST_SIGNATURE_FN;
 
     const payload: SiwfResponsePayloadAddProvider =
       await createSignedAddProviderPayload(userAddress, signatureFn, {
@@ -29,9 +32,9 @@ describe("createSignedAddProviderPayload", () => {
 
 describe("createSignedClaimHandlePayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0x1234";
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const baseHandle = "Alice";
-    const signatureFn: SignatureFn = async (_request) => "fake-signature";
+    const signatureFn = TEST_SIGNATURE_FN;
 
     const payload: SiwfResponsePayloadClaimHandle =
       await createSignedClaimHandlePayload(userAddress, signatureFn, {
@@ -45,8 +48,8 @@ describe("createSignedClaimHandlePayload", () => {
 
 describe("createSignedGraphKeyPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0x1234";
-    const signatureFn: SignatureFn = async () => "fake-signature-for-graph";
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+    const signatureFn = TEST_SIGNATURE_FN;
 
     const payload = await createSignedGraphKeyPayload(
       userAddress,
@@ -63,6 +66,29 @@ describe("createSignedGraphKeyPayload", () => {
           },
         ],
       },
+    );
+
+    expect(payload).toMatchSnapshot();
+  });
+});
+
+describe("createSignedLogInPayload", () => {
+  it("returns the correct payload", async () => {
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+    const signatureFn = TEST_SIGNATURE_FN;
+    const mockLoginPayloadArguments: CreateSignedLogInPayloadArguments = {
+      domain: "your-app.com",
+      uri: "https://your-app.com/signin/callback",
+      version: "1",
+      nonce: "N6rLwqyz34oUxJEXJ",
+      chainId: "123",
+      issuedAt: "2024-10-29T19:17:27.077Z",
+    };
+
+    const payload: SiwfResponsePayloadLogin = await createSignedLogInPayload(
+      userAddress,
+      signatureFn,
+      mockLoginPayloadArguments,
     );
 
     expect(payload).toMatchSnapshot();

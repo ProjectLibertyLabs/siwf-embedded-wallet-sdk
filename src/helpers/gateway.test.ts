@@ -17,7 +17,7 @@ describe("getGatewayAccount", () => {
     const fetchFn: GatewayFetchFn = async (_method, _path) => {
       return new Response(JSON.stringify(body), { status: 200 });
     };
-    const address = "0x1234";
+    const address = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
 
     const result = await getGatewayAccount(fetchFn, address);
 
@@ -27,7 +27,7 @@ describe("getGatewayAccount", () => {
     const fetchFn: GatewayFetchFn = async (_method, _path) => {
       return new Response(null, { status: 404 });
     };
-    const address = "0x1234";
+    const address = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
 
     const result = await getGatewayAccount(fetchFn, address);
 
@@ -51,7 +51,7 @@ describe("getGatewayAccount", () => {
     const fetchFn: GatewayFetchFn = async (_method, _path) => {
       return new Response("{stacktrace: '...'}", { status: 500 });
     };
-    const address = "0x1234";
+    const address = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
 
     try {
       await getGatewayAccount(fetchFn, address);
@@ -185,7 +185,7 @@ describe("getGatewayAccount", () => {
 
         return new Response(JSON.stringify(gatewayResponse), { status: 200 });
       };
-      const address = "0x1234";
+      const address = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
       const callbackFn: MsaCreationCallbackFn = (data) => {
         expect(data).toStrictEqual(gatewayResponse);
       };

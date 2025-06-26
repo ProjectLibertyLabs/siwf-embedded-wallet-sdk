@@ -1,17 +1,18 @@
 import { GatewaySiwfResponse } from "./gateway-types.js";
 import {
   ClaimHandlePayloadArguments,
+  CreateSignedLogInPayloadArguments,
   ItemActionsPayloadArguments,
 } from "./siwf-types.js";
 import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
 import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
 import { mockGatewayLoginResponse } from "./static-mocks/gateway-login.js";
-import { mockCaip122 } from "./signature-requests.js";
 import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
+  createSignedLogInPayload,
 } from "./helpers/payloads.js";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import {
@@ -22,6 +23,7 @@ import {
 import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 import { generateGraphKeyPair } from "./helpers/crypto.js";
 import { convertSS58AddressToEthereum } from "./helpers/utils.js";
+import { v4 as generateRandomUuid } from "uuid";
 
 export async function startSiwf(
   userAddress: string,
@@ -126,12 +128,23 @@ export async function startSiwf(
     return convertSS58AddressToEthereum(mockGatewayNewUserResponse());
   } else {
     // Process Login
-
-    // Request CAIP-122 Signature
-    const _ignoreForMockCaip122Signature = await signatureFn({
-      method: "personal_sign",
-      params: [userAddress, mockCaip122],
-    });
+    const loginPayloadArguments: CreateSignedLogInPayloadArguments = {
+      domain: new URL(
+        decodedSiwfSignedRequest.requestedSignatures.payload.callback,
+      ).hostname,
+      uri: decodedSiwfSignedRequest.requestedSignatures.payload.callback,
+      version: "1",
+      nonce: generateRandomUuid(),
+      chainId:
+        "0x4a587bf17a404e3572747add7aab7bbe56e805a5479c6c436f07f36fcc8d3ae1", //hardcoded mainnet
+      // when we implement get Block Info, the genesis will be in that object. use that value here.
+      issuedAt: JSON.stringify(new Date()),
+    };
+    const _signedLoginSiwfResponse = createSignedLogInPayload(
+      userAddress,
+      signatureFn,
+      loginPayloadArguments,
+    );
 
     // TODO: Build the mock siwfResponse
     const siwfResponse = mockLoginResponse();

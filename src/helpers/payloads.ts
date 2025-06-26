@@ -8,12 +8,15 @@ import { EIP712Document, SignatureFn } from "../types";
 import {
   AddProviderPayloadArguments,
   ClaimHandlePayloadArguments,
+  CreateSignedLogInPayloadArguments,
   ItemActionsPayloadArguments,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
+  SiwfResponsePayloadLogin,
 } from "src/siwf-types";
 import { isHexString } from "./utils";
+import { ethers } from "ethers";
 
 export async function createSignedAddProviderPayload(
   userAddress: string,
@@ -115,5 +118,48 @@ export async function createSignedGraphKeyPayload(
     },
     type: "itemActions",
     payload: payloadArguments,
+  };
+}
+
+export async function createSignedLogInPayload(
+  userAddress: string,
+  signatureFn: SignatureFn,
+  payloadArguments: CreateSignedLogInPayloadArguments,
+): Promise<SiwfResponsePayloadLogin> {
+  const loginCaip122 = `${payloadArguments.domain} wants you to sign in with your Frequency account:
+    frequency:${payloadArguments.chainId}:${userAddress}
+    
+    {{#showStatement}}{{statement}}
+    
+    
+    {{/showStatement}}URI: ${payloadArguments.uri}
+    Version: ${payloadArguments.version}
+    Nonce: ${payloadArguments.nonce}
+    Chain ID: frequency:${payloadArguments.chainReference}
+    Issued At: ${payloadArguments.issuedAt}
+  `;
+
+  const signature = await signatureFn({
+    method: "personal_sign",
+    params: [userAddress, loginCaip122],
+  });
+
+  return {
+    userPublicKey: {
+      encodedValue: ethers.getAddress(userAddress),
+      encoding: "base16",
+      format: "eip-55",
+      type: "Secp256k1",
+    },
+    signature: {
+      algo: "SECP256K1",
+      encoding: "base16",
+      encodedValue: signature,
+    },
+    type: "login",
+    payload: {
+      message: loginCaip122,
+    },
+    credentials: [],
   };
 }

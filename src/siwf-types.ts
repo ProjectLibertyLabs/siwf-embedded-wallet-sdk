@@ -35,20 +35,22 @@ interface SiwfResponsePayloadBase {
 }
 
 export interface SiwfResponsePayloadLogin extends SiwfResponsePayloadBase {
+  userPublicKey: SiwfPublicKey;
+  signature: {
+    algo: AlgorithmType;
+    encoding: "base16";
+    encodedValue: string;
+  };
   type: "login";
   payload: {
     message: string;
   };
+  credentials: [];
 }
 
 export interface AddProviderPayloadArguments extends Record<string, unknown> {
   authorizedMsaId: string;
   schemaIds: number[];
-  expiration: number;
-}
-
-export interface ClaimHandlePayloadArguments extends Record<string, unknown> {
-  baseHandle: string;
   expiration: number;
 }
 
@@ -72,19 +74,6 @@ export interface ItemActionsPayloadArguments extends Record<string, unknown> {
   }[];
 }
 
-export interface SiwfResponsePayloadClaimHandle
-  extends SiwfResponsePayloadBase {
-  endpoint: {
-    pallet: "handles";
-    extrinsic: "claimHandle";
-  };
-  type: "claimHandle";
-  payload: {
-    baseHandle: string;
-    expiration: number;
-  };
-}
-
 export interface SiwfResponsePayloadItemActions
   extends SiwfResponsePayloadBase {
   endpoint: {
@@ -93,6 +82,11 @@ export interface SiwfResponsePayloadItemActions
   };
   type: "itemActions";
   payload: ItemActionsPayloadArguments;
+}
+
+export interface ClaimHandlePayloadArguments extends Record<string, unknown> {
+  baseHandle: string;
+  expiration: number;
 }
 
 export interface SiwfResponsePayloadClaimHandle
@@ -113,6 +107,16 @@ export type SiwfResponsePayload =
   | SiwfResponsePayloadItemActions
   | SiwfResponsePayloadClaimHandle
   | SiwfResponsePayloadBase;
+
+export interface CreateSignedLogInPayloadArguments
+  extends Record<string, unknown> {
+  domain: string;
+  uri: string;
+  version: string;
+  chainId: string;
+  nonce?: string;
+  issuedAt?: string;
+}
 
 interface SiwfResponseCredentialBase {
   "@context": [
