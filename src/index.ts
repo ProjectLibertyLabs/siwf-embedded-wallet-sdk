@@ -123,10 +123,6 @@ export async function startSiwf(
     // Actual:
     // return _ignoreForMockGatewaySiwfResponse;
     // Return Mock
-    console.log(
-      "mockGatewayNewUserResponse()****",
-      mockGatewayNewUserResponse(),
-    );
     return convertSS58AddressToEthereum(mockGatewayNewUserResponse());
   } else {
     // Process Login
