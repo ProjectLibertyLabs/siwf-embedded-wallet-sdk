@@ -3,18 +3,14 @@
 
 import { HexString } from "@frequency-chain/ethereum-utils";
 
-type CurveType = "Sr25519" | "Secp256k1";
+type CurveType = "Secp256k1";
 
-type AlgorithmType = "SR25519" | "SECP256K1";
-
-type SupportedPayload = unknown;
-
-export type SignedPayload = Uint8Array | SupportedPayload;
+type AlgorithmType = "SECP256K1";
 
 export interface SiwfPublicKey {
   encodedValue: string;
-  encoding: "base58" | "base16";
-  format: "ss58" | "eip-55";
+  encoding: "base16";
+  format: "eip-55";
   type: CurveType;
 }
 
@@ -23,12 +19,14 @@ interface SiwfResponsePayloadEndpoint {
   extrinsic: string;
 }
 
+export interface SiwfResponsePayloadSignature {
+  algo: AlgorithmType;
+  encoding: "base16";
+  encodedValue: string;
+}
+
 interface SiwfResponsePayloadBase {
-  signature: {
-    algo: AlgorithmType;
-    encoding: "base16";
-    encodedValue: string;
-  };
+  signature: SiwfResponsePayloadSignature;
   endpoint?: SiwfResponsePayloadEndpoint;
   type: string;
   payload: Record<string, unknown>;
@@ -94,7 +92,7 @@ export type SiwfResponsePayload =
   | SiwfResponsePayloadClaimHandle
   | SiwfResponsePayloadBase;
 
-export interface CreateSignedLogInPayloadArguments
+export interface CreateLoginSiwfResponseArguments
   extends Record<string, unknown> {
   domain: string;
   uri: string;
@@ -103,6 +101,12 @@ export interface CreateSignedLogInPayloadArguments
   nonce?: string;
   issuedAt?: string;
 }
+
+export type SignInPayloads = (
+  | SiwfResponsePayloadAddProvider
+  | SiwfResponsePayloadItemActions
+  | SiwfResponsePayloadClaimHandle
+)[];
 
 interface SiwfResponseCredentialBase {
   "@context": [

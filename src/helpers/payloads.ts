@@ -8,15 +8,12 @@ import { EIP712Document, SignatureFn } from "../types";
 import {
   AddProviderPayloadArguments,
   ClaimHandlePayloadArguments,
-  CreateSignedLogInPayloadArguments,
   ItemActionsPayloadArguments,
-  SiwfResponse,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
 } from "src/siwf-types";
-import { isHexString } from "./utils";
-import { ethers } from "ethers";
+import { encodedValueToSignature, isHexString } from "./utils";
 
 export async function createSignedAddProviderPayload(
   userAddress: string,
@@ -31,17 +28,15 @@ export async function createSignedAddProviderPayload(
     payloadArguments.schemaIds,
     payloadArguments.expiration,
   ) as EIP712Document;
-  const signature = await signatureFn({
+  const encodedValue = await signatureFn({
     method: "eth_signTypedData_v4",
     params: [userAddress, addProviderEip712],
   });
 
+  const signature = encodedValueToSignature(encodedValue);
+
   return {
-    signature: {
-      algo: "SECP256K1",
-      encoding: "base16",
-      encodedValue: signature,
-    },
+    signature,
     endpoint: {
       pallet: "msa",
       extrinsic,
@@ -60,17 +55,15 @@ export async function createSignedClaimHandlePayload(
     payloadArguments.baseHandle,
     payloadArguments.expiration,
   ) as EIP712Document;
-  const signature = await signatureFn({
+  const encodedValue = await signatureFn({
     method: "eth_signTypedData_v4",
     params: [userAddress, claimHandleEip712],
   });
 
+  const signature = encodedValueToSignature(encodedValue);
+
   return {
-    signature: {
-      algo: "SECP256K1",
-      encoding: "base16",
-      encodedValue: signature,
-    },
+    signature,
     endpoint: {
       pallet: "handles",
       extrinsic: "claimHandle",
@@ -79,6 +72,7 @@ export async function createSignedClaimHandlePayload(
     payload: payloadArguments,
   };
 }
+
 export async function createSignedGraphKeyPayload(
   userAddress: string,
   signatureFn: SignatureFn,
@@ -95,75 +89,28 @@ export async function createSignedGraphKeyPayload(
       } else throw new Error(`Expected HexString: ${payloadHex}`);
     },
   );
+
   const addItemsEip712 = getEip712BrowserRequestItemizedSignaturePayloadV2(
     payloadArguments.schemaId,
     payloadArguments.targetHash,
     payloadArguments.expiration,
     actions,
   ) as EIP712Document;
-  const signature = await signatureFn({
+
+  const encodedValue = await signatureFn({
     method: "eth_signTypedData_v4",
     params: [userAddress, addItemsEip712],
   });
 
+  const signature = encodedValueToSignature(encodedValue);
+
   return {
-    signature: {
-      algo: "SECP256K1",
-      encoding: "base16",
-      encodedValue: signature,
-    },
+    signature,
     endpoint: {
       pallet: "statefulStorage",
       extrinsic: "applyItemActionsWithSignatureV2",
     },
     type: "itemActions",
     payload: payloadArguments,
-  };
-}
-
-export async function createSignedLogInPayload(
-  userAddress: string,
-  signatureFn: SignatureFn,
-  payloadArguments: CreateSignedLogInPayloadArguments,
-): Promise<SiwfResponse> {
-  const loginCaip122 = `${payloadArguments.domain} wants you to sign in with your Frequency account:
-    frequency:${payloadArguments.chainId}:${userAddress}
-    
-    {{#showStatement}}{{statement}}
-    
-    
-    {{/showStatement}}URI: ${payloadArguments.uri}
-    Version: ${payloadArguments.version}
-    Nonce: ${payloadArguments.nonce}
-    Chain ID: frequency:${payloadArguments.chainReference}
-    Issued At: ${payloadArguments.issuedAt}
-  `;
-
-  const signature = await signatureFn({
-    method: "personal_sign",
-    params: [userAddress, loginCaip122],
-  });
-
-  return {
-    userPublicKey: {
-      encodedValue: ethers.getAddress(userAddress),
-      encoding: "base58",
-      format: "ss58",
-      type: "Secp256k1",
-    },
-    payloads: [
-      {
-        signature: {
-          algo: "SECP256K1",
-          encoding: "base16",
-          encodedValue: signature,
-        },
-        type: "login",
-        payload: {
-          message: loginCaip122,
-        },
-      },
-    ],
-    credentials: [],
   };
 }

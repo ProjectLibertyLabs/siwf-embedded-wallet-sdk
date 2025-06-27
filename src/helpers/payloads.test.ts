@@ -3,15 +3,15 @@ import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
-  createSignedLogInPayload,
 } from "./payloads";
 import {
-  CreateSignedLogInPayloadArguments,
+  CreateLoginSiwfResponseArguments,
   SiwfResponse,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
 } from "../siwf-types";
 import { TEST_SIGNATURE_FN } from "../static-mocks/test-signature-fn.js";
+import { createLoginSiwfResponse } from "./siwf";
 
 describe("createSignedAddProviderPayload", () => {
   it("returns the correct payload", async () => {
@@ -75,7 +75,7 @@ describe("createSignedLogInPayload", () => {
   it("returns the correct payload", async () => {
     const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const signatureFn = TEST_SIGNATURE_FN;
-    const mockLoginPayloadArguments: CreateSignedLogInPayloadArguments = {
+    const mockLoginPayloadArguments: CreateLoginSiwfResponseArguments = {
       domain: "your-app.com",
       uri: "https://your-app.com/signin/callback",
       version: "1",
@@ -84,7 +84,7 @@ describe("createSignedLogInPayload", () => {
       issuedAt: "2024-10-29T19:17:27.077Z",
     };
 
-    const payload: SiwfResponse = await createSignedLogInPayload(
+    const payload: SiwfResponse = await createLoginSiwfResponse(
       userAddress,
       signatureFn,
       mockLoginPayloadArguments,

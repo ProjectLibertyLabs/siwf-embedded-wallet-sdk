@@ -1,16 +1,14 @@
 import { GatewaySiwfResponse } from "./gateway-types.js";
 import {
   ClaimHandlePayloadArguments,
-  CreateSignedLogInPayloadArguments,
+  CreateLoginSiwfResponseArguments,
   ItemActionsPayloadArguments,
+  SignInPayloads,
 } from "./siwf-types.js";
-import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
-import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
 import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
-  createSignedLogInPayload,
 } from "./helpers/payloads.js";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import {
@@ -22,6 +20,10 @@ import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 import { generateGraphKeyPair } from "./helpers/crypto.js";
 import { convertSS58AddressToEthereum } from "./helpers/utils.js";
 import { v4 as generateRandomUuid } from "uuid";
+import {
+  createLoginSiwfResponse,
+  createSignInSiwfResponse,
+} from "./helpers/siwf";
 
 export async function startSiwf(
   userAddress: string,
@@ -67,7 +69,7 @@ export async function startSiwf(
       schemaIds: requestedPermissions,
       expiration,
     };
-    const _addProviderPayload = await createSignedAddProviderPayload(
+    const addProviderPayload = await createSignedAddProviderPayload(
       userAddress,
       signatureFn,
       addProviderArguments,
@@ -78,7 +80,7 @@ export async function startSiwf(
       baseHandle: signUpHandle,
       expiration,
     };
-    const _claimHandlePayload = await createSignedClaimHandlePayload(
+    const claimHandlePayload = await createSignedClaimHandlePayload(
       userAddress,
       signatureFn,
       claimHandleArguments,
@@ -96,7 +98,7 @@ export async function startSiwf(
         },
       ],
     };
-    const _addGraphKeyPayload = await createSignedGraphKeyPayload(
+    const addGraphKeyPayload = await createSignedGraphKeyPayload(
       userAddress,
       signatureFn,
       addGraphKeyArguments,
@@ -107,26 +109,29 @@ export async function startSiwf(
     //   params: [userAddress, addRecoveryHash712],
     // });
 
-    const siwfResponse = mockNewUserResponse();
+    const payloads: SignInPayloads = [
+      addProviderPayload,
+      addGraphKeyPayload,
+      claimHandlePayload,
+    ];
+
+    const siwfResponse = await createSignInSiwfResponse(userAddress, payloads);
 
     // Submit to Gateway
-    const _ignoreForMockGatewaySiwfResponse = await postGatewaySiwf(
+    const gatewaySiwfResponse = await postGatewaySiwf(
       gatewayFetchFn,
       siwfResponse,
     );
 
     // Kick off the msaCallback
     if (msaCreationCallbackFn) {
-      pollForAccount(gatewayFetchFn, userAddress, msaCreationCallbackFn);
+      await pollForAccount(gatewayFetchFn, userAddress, msaCreationCallbackFn);
     }
 
-    // Actual:
-    // return _ignoreForMockGatewaySiwfResponse;
-    // Return Mock
-    return convertSS58AddressToEthereum(mockGatewayNewUserResponse());
+    return convertSS58AddressToEthereum(gatewaySiwfResponse);
   } else {
     // Process Login
-    const loginPayloadArguments: CreateSignedLogInPayloadArguments = {
+    const loginPayloadArguments: CreateLoginSiwfResponseArguments = {
       domain: new URL(
         decodedSiwfSignedRequest.requestedSignatures.payload.callback,
       ).hostname,
@@ -138,7 +143,7 @@ export async function startSiwf(
       // when we implement get Block Info, the genesis will be in that object. use that value here.
       issuedAt: JSON.stringify(new Date()),
     };
-    const signedLoginSiwfResponse = await createSignedLogInPayload(
+    const signedLoginSiwfResponse = await createLoginSiwfResponse(
       userAddress,
       signatureFn,
       loginPayloadArguments,
@@ -148,7 +153,6 @@ export async function startSiwf(
       gatewayFetchFn,
       signedLoginSiwfResponse,
     );
-
 
     return convertSS58AddressToEthereum(gatewaySiwfResponse);
   }

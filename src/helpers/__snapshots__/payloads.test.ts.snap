@@ -99,8 +99,8 @@ exports[`createSignedLogInPayload > returns the correct payload 1`] = `
   ],
   "userPublicKey": {
     "encodedValue": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
-    "encoding": "base58",
-    "format": "ss58",
+    "encoding": "base16",
+    "format": "eip-55",
     "type": "Secp256k1",
   },
 }
