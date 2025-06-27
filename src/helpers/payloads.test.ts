@@ -7,10 +7,9 @@ import {
 } from "./payloads";
 import {
   CreateSignedLogInPayloadArguments,
+  SiwfResponse,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
-  SiwfResponsePayloadItemActions,
-  SiwfResponsePayloadLogin,
 } from "../siwf-types";
 import { TEST_SIGNATURE_FN } from "../static-mocks/test-signature-fn.js";
 
@@ -85,7 +84,7 @@ describe("createSignedLogInPayload", () => {
       issuedAt: "2024-10-29T19:17:27.077Z",
     };
 
-    const payload: SiwfResponsePayloadLogin = await createSignedLogInPayload(
+    const payload: SiwfResponse = await createSignedLogInPayload(
       userAddress,
       signatureFn,
       mockLoginPayloadArguments,

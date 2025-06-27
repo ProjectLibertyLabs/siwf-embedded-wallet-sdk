@@ -3,6 +3,6 @@
 exports[`Basic startSiwf test > Can do a thing 1`] = `
 {
   "controlKey": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
-  "msaId": "314159265358979323846264338",
+  "msaId": "290",
 }
 `;

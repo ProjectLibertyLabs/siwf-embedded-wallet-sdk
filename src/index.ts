@@ -5,9 +5,7 @@ import {
   ItemActionsPayloadArguments,
 } from "./siwf-types.js";
 import { mockNewUserResponse } from "./static-mocks/response-new-user.js";
-import { mockLoginResponse } from "./static-mocks/response-login.js";
 import { mockGatewayNewUserResponse } from "./static-mocks/gateway-new-user.js";
-import { mockGatewayLoginResponse } from "./static-mocks/gateway-login.js";
 import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
@@ -125,6 +123,10 @@ export async function startSiwf(
     // Actual:
     // return _ignoreForMockGatewaySiwfResponse;
     // Return Mock
+    console.log(
+      "mockGatewayNewUserResponse()****",
+      mockGatewayNewUserResponse(),
+    );
     return convertSS58AddressToEthereum(mockGatewayNewUserResponse());
   } else {
     // Process Login
@@ -140,23 +142,19 @@ export async function startSiwf(
       // when we implement get Block Info, the genesis will be in that object. use that value here.
       issuedAt: JSON.stringify(new Date()),
     };
-    const _signedLoginSiwfResponse = createSignedLogInPayload(
+    const signedLoginSiwfResponse = await createSignedLogInPayload(
       userAddress,
       signatureFn,
       loginPayloadArguments,
     );
 
-    // TODO: Build the mock siwfResponse
-    const siwfResponse = mockLoginResponse();
-
-    const _ignoreForMockGatewaySiwfResponse = await postGatewaySiwf(
+    const gatewaySiwfResponse = await postGatewaySiwf(
       gatewayFetchFn,
-      siwfResponse,
+      signedLoginSiwfResponse,
     );
 
-    // Actual:
-    // return _ignoreForMockGatewaySiwfResponse;
-    // Return Mock
-    return convertSS58AddressToEthereum(mockGatewayLoginResponse());
+    console.log("gatewaySiwfResponse***", gatewaySiwfResponse);
+
+    return convertSS58AddressToEthereum(gatewaySiwfResponse);
   }
 }

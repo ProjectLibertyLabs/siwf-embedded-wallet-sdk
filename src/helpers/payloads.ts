@@ -10,10 +10,10 @@ import {
   ClaimHandlePayloadArguments,
   CreateSignedLogInPayloadArguments,
   ItemActionsPayloadArguments,
+  SiwfResponse,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
-  SiwfResponsePayloadLogin,
 } from "src/siwf-types";
 import { isHexString } from "./utils";
 import { ethers } from "ethers";
@@ -125,7 +125,7 @@ export async function createSignedLogInPayload(
   userAddress: string,
   signatureFn: SignatureFn,
   payloadArguments: CreateSignedLogInPayloadArguments,
-): Promise<SiwfResponsePayloadLogin> {
+): Promise<SiwfResponse> {
   const loginCaip122 = `${payloadArguments.domain} wants you to sign in with your Frequency account:
     frequency:${payloadArguments.chainId}:${userAddress}
     
@@ -147,19 +147,23 @@ export async function createSignedLogInPayload(
   return {
     userPublicKey: {
       encodedValue: ethers.getAddress(userAddress),
-      encoding: "base16",
-      format: "eip-55",
+      encoding: "base58",
+      format: "ss58",
       type: "Secp256k1",
     },
-    signature: {
-      algo: "SECP256K1",
-      encoding: "base16",
-      encodedValue: signature,
-    },
-    type: "login",
-    payload: {
-      message: loginCaip122,
-    },
+    payloads: [
+      {
+        signature: {
+          algo: "SECP256K1",
+          encoding: "base16",
+          encodedValue: signature,
+        },
+        type: "login",
+        payload: {
+          message: loginCaip122,
+        },
+      },
+    ],
     credentials: [],
   };
 }

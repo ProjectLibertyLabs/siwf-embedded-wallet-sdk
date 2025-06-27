@@ -34,20 +34,6 @@ interface SiwfResponsePayloadBase {
   payload: Record<string, unknown>;
 }
 
-export interface SiwfResponsePayloadLogin extends SiwfResponsePayloadBase {
-  userPublicKey: SiwfPublicKey;
-  signature: {
-    algo: AlgorithmType;
-    encoding: "base16";
-    encodedValue: string;
-  };
-  type: "login";
-  payload: {
-    message: string;
-  };
-  credentials: [];
-}
-
 export interface AddProviderPayloadArguments extends Record<string, unknown> {
   authorizedMsaId: string;
   schemaIds: number[];
