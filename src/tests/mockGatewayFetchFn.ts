@@ -1,3 +1,12 @@
+import {
+  mockNewUserAccountResponse,
+  mockNewUserGatewaySiwfResponse,
+  mockProviderAccountResponse,
+  mockProviderControlKey,
+  mockReturningUserAccountResponse,
+  mockReturningUserControlKey,
+} from "./consts";
+
 export const mockGatewayFetch = async (
   method: "GET" | "POST",
   path: string,
@@ -7,21 +16,27 @@ export const mockGatewayFetch = async (
     return {
       ok: true,
       status: 200,
-      json: async () => ({
-        msaId: "290",
-        controlKey: "0xINVALID_KEY",
-      }),
+      json: async () => mockNewUserGatewaySiwfResponse,
     } as Response;
   }
 
   if (path.startsWith("/v1/accounts/account/")) {
-    return {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        someData: "value",
-      }),
-    } as Response;
+    if (method === "GET")
+      return {
+        ok: true,
+        status: 200,
+        json: async (address: string) => {
+          // if getting provider account
+          if (address === mockProviderControlKey)
+            return mockProviderAccountResponse;
+          // if getting returning user account
+          if (address === mockReturningUserControlKey)
+            return mockReturningUserAccountResponse;
+          // if getting new user account
+          if (address === mockReturningUserControlKey)
+            return mockNewUserAccountResponse;
+        },
+      } as Response;
   }
 
   // Default: return error response
