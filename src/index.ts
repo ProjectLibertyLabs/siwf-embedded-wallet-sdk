@@ -149,7 +149,6 @@ export async function startSiwf(
       signedLoginSiwfResponse,
     );
 
-    console.log("gatewaySiwfResponse***", gatewaySiwfResponse);
 
     return convertSS58AddressToEthereum(gatewaySiwfResponse);
   }
