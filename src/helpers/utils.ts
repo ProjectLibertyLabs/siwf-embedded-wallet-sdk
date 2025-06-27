@@ -18,7 +18,6 @@ export function isHexString(value: string): value is HexString {
 export function convertSS58AddressToEthereum<T extends { controlKey: string }>(
   objectContainingControlKey: T,
 ): T {
-  console.log("objectContainingControlKey***", objectContainingControlKey);
   const ethereumAddress = ethers.getAddress(
     u8aToHex(addressToEvm(objectContainingControlKey.controlKey)),
   );
