@@ -2,8 +2,8 @@ import { GatewayFetchFn } from "../types";
 import { AccountResponse, GatewaySiwfResponse } from "../gateway-types";
 
 export const mockGatewayFetchFactory = (
-  hasAccountResponse: AccountResponse,
-  providerAccountResponse: AccountResponse,
+  hasAccountResponse: AccountResponse | null,
+  providerAccountResponse: AccountResponse | null,
   gatewaySiwfResponse: GatewaySiwfResponse,
   providerControlKey: string,
 ): GatewayFetchFn => {

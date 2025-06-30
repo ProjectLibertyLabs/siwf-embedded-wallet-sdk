@@ -126,7 +126,7 @@ export async function startSiwf(
     // Kick off the msaCallback
     // Don't wait the pollForAccount. Let it complete after the return.
     if (msaCreationCallbackFn) {
-      // eslint-disable-next-line
+       
       pollForAccount(gatewayFetchFn, userAddress, msaCreationCallbackFn);
     }
 

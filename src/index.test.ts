@@ -67,7 +67,7 @@ describe("Basic startSiwf test", () => {
           providerControlKey,
         ),
         mockProviderEncodedRequest,
-        null,
+        undefined,
         "john.doe@example.com",
         () => {},
       ),
@@ -87,7 +87,7 @@ describe("Basic startSiwf test", () => {
         ),
         mockProviderEncodedRequest,
         "JohnDoe",
-        null,
+        undefined,
         () => {},
       ),
     ).rejects.toThrow("signUpEmail missing for non-existent account.");
