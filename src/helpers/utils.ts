@@ -2,8 +2,7 @@ import { HexString } from "@frequency-chain/ethereum-utils";
 import { u8aToHex } from "@polkadot/util";
 import { addressToEvm } from "@polkadot/util-crypto";
 import { ethers } from "ethers";
-import { SiwfPublicKey } from "../../dist/siwf-types";
-import { SiwfResponsePayloadSignature } from "../siwf-types";
+import { SiwfResponsePayloadSignature, SiwfPublicKey } from "../siwf-types";
 
 /**
  * Validate that a string is a valid hex string
