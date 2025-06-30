@@ -17,6 +17,7 @@ import {
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import {
   getGatewayAccount,
+  getGatewayChainInfo,
   pollForAccount,
   postGatewaySiwf,
 } from "./helpers/gateway.js";
@@ -24,6 +25,8 @@ import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 import { generateGraphKeyPair } from "./helpers/crypto.js";
 import { convertSS58AddressToEthereum } from "./helpers/utils.js";
 import { v4 as generateRandomUuid } from "uuid";
+
+const PAYLOAD_EXPIRATION_DELTA = 90; // Matches frequency access config
 
 export async function startSiwf(
   userAddress: string,
@@ -57,9 +60,12 @@ export async function startSiwf(
       throw new Error("signUpHandle missing for non-existent account.");
 
     // Generate Graph Key
-    const expiration = 100; // TODO: Calculate correctly based on chain state
     const graphKeyPair = generateGraphKeyPair();
     // Generate Recovery Key
+
+    // Determine expiration
+    const currentBlock = (await getGatewayChainInfo(gatewayFetchFn)).blocknumber;
+    const expiration = currentBlock + PAYLOAD_EXPIRATION_DELTA;
 
     // Sign AddProvider
     const requestedPermissions =
@@ -128,6 +134,7 @@ export async function startSiwf(
     return convertSS58AddressToEthereum(mockGatewayNewUserResponse());
   } else {
     // Process Login
+    const chainId = (await getGatewayChainInfo(gatewayFetchFn)).genesis;
     const loginPayloadArguments: CreateSignedLogInPayloadArguments = {
       domain: new URL(
         decodedSiwfSignedRequest.requestedSignatures.payload.callback,
@@ -135,9 +142,7 @@ export async function startSiwf(
       uri: decodedSiwfSignedRequest.requestedSignatures.payload.callback,
       version: "1",
       nonce: generateRandomUuid(),
-      chainId:
-        "0x4a587bf17a404e3572747add7aab7bbe56e805a5479c6c436f07f36fcc8d3ae1", //hardcoded mainnet
-      // when we implement get Block Info, the genesis will be in that object. use that value here.
+      chainId,
       issuedAt: JSON.stringify(new Date()),
     };
     const _signedLoginSiwfResponse = createSignedLogInPayload(

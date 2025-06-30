@@ -53,7 +53,7 @@ export type GatewayFetchGetAccountFn = (
 
 export type GatewayFetchFn = (
   method: "GET" | "POST",
-  path: `/v1/accounts/account/${Address}` | "/v2/accounts/siwf",
+  path: `/v1/accounts/account/${Address}` | "/v2/accounts/siwf" | "/v1/frequency/blockinfo",
   body?: GatewayFetchBody,
 ) => Promise<Response>;
 
