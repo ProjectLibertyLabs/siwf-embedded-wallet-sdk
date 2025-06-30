@@ -14,13 +14,10 @@ export async function createLoginSiwfResponse(
   const loginCaip122 = `${payloadArguments.domain} wants you to sign in with your Frequency account:
     frequency:${payloadArguments.chainId}:${userAddress}
     
-    {{#showStatement}}{{statement}}
-    
-    
-    {{/showStatement}}URI: ${payloadArguments.uri}
+    URI: ${payloadArguments.uri}
     Version: ${payloadArguments.version}
     Nonce: ${payloadArguments.nonce}
-    Chain ID: frequency:${payloadArguments.chainReference}
+    Chain ID: frequency:${payloadArguments.chainId}
     Issued At: ${payloadArguments.issuedAt}
   `;
 

@@ -20,7 +20,6 @@ export async function getGatewayAccount(
     "GET",
     `/v1/accounts/account/${userAddress}`,
   );
-  console.log("response**", response.json());
   if (response.ok) {
     return (await response.json()) as AccountResponse;
   } else {

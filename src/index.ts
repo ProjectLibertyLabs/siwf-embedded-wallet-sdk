@@ -124,8 +124,10 @@ export async function startSiwf(
     );
 
     // Kick off the msaCallback
+    // Don't wait the pollForAccount. Let it complete after the return.
     if (msaCreationCallbackFn) {
-      await pollForAccount(gatewayFetchFn, userAddress, msaCreationCallbackFn);
+      // eslint-disable-next-line
+      pollForAccount(gatewayFetchFn, userAddress, msaCreationCallbackFn);
     }
 
     return convertSS58AddressToEthereum(gatewaySiwfResponse);
