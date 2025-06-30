@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { convertSS58AddressToEthereum } from "./utils";
+import { convertSS58AddressToEthereum, userAddressToPublicKey } from "./utils";
 
 describe("convertSS58AddressToEthereum", () => {
   it("succeeds", async () => {
@@ -10,5 +10,20 @@ describe("convertSS58AddressToEthereum", () => {
 
     const expected = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     expect(result).toStrictEqual({ controlKey: expected, foo: "bar" });
+  });
+});
+
+describe("userAddressToPublicKey", () => {
+  it("succeeds", async () => {
+    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+
+    const result = userAddressToPublicKey(userAddress);
+
+    expect(result).toStrictEqual({
+      encodedValue: userAddress,
+      encoding: "base16",
+      format: "eip-55",
+      type: "Secp256k1",
+    });
   });
 });
