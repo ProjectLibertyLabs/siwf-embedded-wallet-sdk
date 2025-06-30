@@ -1,5 +1,9 @@
 import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
-import { AccountResponse, GatewaySiwfResponse } from "../gateway-types.js";
+import {
+  AccountResponse,
+  ChainInfoResponse,
+  GatewaySiwfResponse,
+} from "../gateway-types.js";
 import { GatewayFetchError } from "../error-types.js";
 import { stringToBase64URL } from "src/base64url";
 import { SiwfResponse } from "src/siwf-types";
@@ -32,6 +36,24 @@ export async function getGatewayAccount(
           response,
         );
     }
+  }
+}
+
+/**
+ * Fetches the chain info (with current block number) via Gateway
+ */
+export async function getGatewayChainInfo(
+  gatewayFetchFn: GatewayFetchFn,
+): Promise<ChainInfoResponse> {
+  const response = await gatewayFetchFn("GET", `/v1/frequency/blockinfo`);
+
+  if (response.ok) {
+    return (await response.json()) as ChainInfoResponse;
+  } else {
+    throw new GatewayFetchError(
+      "Failed GatewayFetchFn for GET BlockInfo",
+      response,
+    );
   }
 }
 

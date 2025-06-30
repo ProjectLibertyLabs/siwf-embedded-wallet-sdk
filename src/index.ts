@@ -13,6 +13,7 @@ import {
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import {
   getGatewayAccount,
+  getGatewayChainInfo,
   pollForAccount,
   postGatewaySiwf,
 } from "./helpers/gateway.js";
@@ -24,6 +25,8 @@ import {
   createLoginSiwfResponse,
   createSignInSiwfResponse,
 } from "./helpers/siwf";
+
+const PAYLOAD_EXPIRATION_DELTA = 90; // Matches frequency access config
 
 export async function startSiwf(
   userAddress: string,
@@ -57,9 +60,13 @@ export async function startSiwf(
       throw new Error("signUpHandle missing for non-existent account.");
 
     // Generate Graph Key
-    const expiration = 100; // TODO: Calculate correctly based on chain state
     const graphKeyPair = generateGraphKeyPair();
     // Generate Recovery Key
+
+    // Determine expiration
+    const finalizedBlock = (await getGatewayChainInfo(gatewayFetchFn))
+      .finalized_blocknumber;
+    const expiration = finalizedBlock + PAYLOAD_EXPIRATION_DELTA;
 
     // Sign AddProvider
     const requestedPermissions =
@@ -126,13 +133,13 @@ export async function startSiwf(
     // Kick off the msaCallback
     // Don't wait the pollForAccount. Let it complete after the return.
     if (msaCreationCallbackFn) {
-       
       pollForAccount(gatewayFetchFn, userAddress, msaCreationCallbackFn);
     }
 
     return convertSS58AddressToEthereum(gatewaySiwfResponse);
   } else {
     // Process Login
+    const chainId = (await getGatewayChainInfo(gatewayFetchFn)).genesis;
     const loginPayloadArguments: CreateLoginSiwfResponseArguments = {
       domain: new URL(
         decodedSiwfSignedRequest.requestedSignatures.payload.callback,
@@ -140,9 +147,7 @@ export async function startSiwf(
       uri: decodedSiwfSignedRequest.requestedSignatures.payload.callback,
       version: "1",
       nonce: generateRandomUuid(),
-      chainId:
-        "0x4a587bf17a404e3572747add7aab7bbe56e805a5479c6c436f07f36fcc8d3ae1", //hardcoded mainnet
-      // when we implement get Block Info, the genesis will be in that object. use that value here.
+      chainId,
       issuedAt: JSON.stringify(new Date()),
     };
     const signedLoginSiwfResponse = await createLoginSiwfResponse(

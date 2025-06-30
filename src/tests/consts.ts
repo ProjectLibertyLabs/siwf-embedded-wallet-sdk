@@ -1,4 +1,8 @@
-import { AccountResponse, GatewaySiwfResponse } from "../gateway-types";
+import {
+  AccountResponse,
+  ChainInfoResponse,
+  GatewaySiwfResponse,
+} from "../gateway-types";
 import { mockGatewayNewUserResponse } from "../static-mocks/gateway-new-user";
 
 // Matching mock user addresses
@@ -37,4 +41,11 @@ export const mockNewUserAccountResponse = null;
 export const mockNewUserGatewaySiwfResponse: GatewaySiwfResponse = {
   ...mockGatewayNewUserResponse(),
   controlKey: mockControlKey,
+};
+
+export const mockChainInfoResponse: ChainInfoResponse = {
+  blocknumber: 32,
+  finalized_blocknumber: 32,
+  genesis: "0x4a587bf17a404e3572747add7aab7bbe56e805a5479c6c436f07f36fcc8d3ae1", // From mainnet
+  runtime_version: 2,
 };

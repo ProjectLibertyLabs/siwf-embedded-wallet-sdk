@@ -9,6 +9,13 @@ export interface AccountResponse {
   handle?: HandleResponse;
 }
 
+export interface ChainInfoResponse {
+  blocknumber: number;
+  finalized_blocknumber: number;
+  genesis: string;
+  runtime_version: number;
+}
+
 interface GraphKeySubject {
   // The id type of the VerifiedGraphKeyCredential.
   id: string;
