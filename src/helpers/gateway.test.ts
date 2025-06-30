@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
-import { AccountResponse, ChainInfoResponse, GatewaySiwfResponse } from "../gateway-types";
+import {
+  AccountResponse,
+  ChainInfoResponse,
+  GatewaySiwfResponse,
+} from "../gateway-types";
 import { GatewayFetchError } from "../error-types";
 import {
   getGatewayAccount,
@@ -11,7 +15,6 @@ import {
 } from "./gateway";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { SiwfResponse } from "../siwf-types";
-
 
 describe("getGatewayAccount", () => {
   it("returns info for an existing user", async () => {
@@ -72,7 +75,7 @@ describe("getGatewayBlockInfo", () => {
       finalized_blocknumber: 32,
       genesis: "0x0234",
       runtime_version: 4,
-     };
+    };
     const fetchFn: GatewayFetchFn = async (_method, _path) => {
       return new Response(JSON.stringify(body), { status: 200 });
     };

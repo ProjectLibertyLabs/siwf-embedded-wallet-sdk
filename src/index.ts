@@ -64,7 +64,8 @@ export async function startSiwf(
     // Generate Recovery Key
 
     // Determine expiration
-    const currentBlock = (await getGatewayChainInfo(gatewayFetchFn)).blocknumber;
+    const currentBlock = (await getGatewayChainInfo(gatewayFetchFn))
+      .blocknumber;
     const expiration = currentBlock + PAYLOAD_EXPIRATION_DELTA;
 
     // Sign AddProvider
@@ -132,7 +133,6 @@ export async function startSiwf(
     // Kick off the msaCallback
     // Don't wait the pollForAccount. Let it complete after the return.
     if (msaCreationCallbackFn) {
-
       pollForAccount(gatewayFetchFn, userAddress, msaCreationCallbackFn);
     }
 

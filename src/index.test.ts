@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { startSiwf } from "./index.js";
 import { mockGatewayFetchFactory } from "./tests/mockGatewayFetchFn";
 import {
+  mockChainInfoResponse,
   mockNewUserAccountResponse,
   mockNewUserGatewaySiwfResponse,
   mockProviderAccountResponse,
@@ -24,6 +25,7 @@ describe("Basic startSiwf test", () => {
         mockReturningUserAccountResponse,
         mockProviderAccountResponse,
         mockRetunringUserGatewaySiwfResponse,
+        mockChainInfoResponse,
         providerControlKey,
       ),
       mockProviderEncodedRequest,
@@ -45,6 +47,7 @@ describe("Basic startSiwf test", () => {
           mockReturningUserAccountResponse,
           null,
           mockRetunringUserGatewaySiwfResponse,
+          mockChainInfoResponse,
           providerControlKey,
         ),
         mockProviderEncodedRequest,
@@ -64,6 +67,7 @@ describe("Basic startSiwf test", () => {
           mockNewUserAccountResponse,
           mockProviderAccountResponse,
           mockNewUserGatewaySiwfResponse,
+          mockChainInfoResponse,
           providerControlKey,
         ),
         mockProviderEncodedRequest,
@@ -83,6 +87,7 @@ describe("Basic startSiwf test", () => {
           mockNewUserAccountResponse,
           mockProviderAccountResponse,
           mockNewUserGatewaySiwfResponse,
+          mockChainInfoResponse,
           providerControlKey,
         ),
         mockProviderEncodedRequest,
@@ -101,6 +106,7 @@ describe("Basic startSiwf test", () => {
         mockNewUserAccountResponse,
         mockProviderAccountResponse,
         mockNewUserGatewaySiwfResponse,
+        mockChainInfoResponse,
         providerControlKey,
       ),
       mockProviderEncodedRequest,

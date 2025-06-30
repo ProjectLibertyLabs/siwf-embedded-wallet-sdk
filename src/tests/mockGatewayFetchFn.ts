@@ -1,10 +1,15 @@
 import { GatewayFetchFn } from "../types";
-import { AccountResponse, GatewaySiwfResponse } from "../gateway-types";
+import {
+  AccountResponse,
+  ChainInfoResponse,
+  GatewaySiwfResponse,
+} from "../gateway-types";
 
 export const mockGatewayFetchFactory = (
   hasAccountResponse: AccountResponse | null,
   providerAccountResponse: AccountResponse | null,
   gatewaySiwfResponse: GatewaySiwfResponse,
+  chainInfoResponse: ChainInfoResponse,
   providerControlKey: string,
 ): GatewayFetchFn => {
   return async (method, path) => {
@@ -29,7 +34,16 @@ export const mockGatewayFetchFactory = (
         } as Response;
     }
 
-    return new Response("Error", {
+    if (path.startsWith("/v1/frequency/blockinfo")) {
+      if (method === "GET")
+        return {
+          ok: true,
+          status: 200,
+          json: async () => chainInfoResponse,
+        } as Response;
+    }
+
+    return new Response(`Error: ${path} not found`, {
       status: 404,
     });
   };
