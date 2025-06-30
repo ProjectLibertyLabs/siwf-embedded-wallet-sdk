@@ -2,6 +2,7 @@ import { HexString } from "@frequency-chain/ethereum-utils";
 import { u8aToHex } from "@polkadot/util";
 import { addressToEvm } from "@polkadot/util-crypto";
 import { ethers } from "ethers";
+import { SiwfResponsePayloadSignature, SiwfPublicKey } from "../siwf-types";
 
 /**
  * Validate that a string is a valid hex string
@@ -25,5 +26,24 @@ export function convertSS58AddressToEthereum<T extends { controlKey: string }>(
   return {
     ...objectContainingControlKey,
     controlKey: ethereumAddress,
+  };
+}
+
+export function userAddressToPublicKey(userAddress: string): SiwfPublicKey {
+  return {
+    encodedValue: ethers.getAddress(userAddress),
+    encoding: "base16",
+    format: "eip-55",
+    type: "Secp256k1",
+  };
+}
+
+export function encodedValueToSignature(
+  encodedValue: string,
+): SiwfResponsePayloadSignature {
+  return {
+    algo: "SECP256K1",
+    encoding: "base16",
+    encodedValue: encodedValue,
   };
 }

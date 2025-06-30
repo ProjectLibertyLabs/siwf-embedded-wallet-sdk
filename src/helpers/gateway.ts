@@ -20,7 +20,6 @@ export async function getGatewayAccount(
     "GET",
     `/v1/accounts/account/${userAddress}`,
   );
-
   if (response.ok) {
     return (await response.json()) as AccountResponse;
   } else {
@@ -67,8 +66,7 @@ export async function postGatewaySiwf(
   });
 
   if (response.ok) {
-    const parsedResponse = response.json();
-    return parsedResponse;
+    return response.json();
   } else {
     throw new GatewayFetchError(
       "Failed GatewayFetchFn for POST siwf",
@@ -85,14 +83,13 @@ export async function poll<T>(
 ): Promise<T> {
   let attempt = 0;
   const startEpochMillis = epochMillisSupplier();
-  const timeoutEpochMillies = startEpochMillis + timeoutSeconds * 1000;
+  const timeoutEpochMillis = startEpochMillis + timeoutSeconds * 1000;
 
-  while (epochMillisSupplier() < timeoutEpochMillies) {
+  while (epochMillisSupplier() < timeoutEpochMillis) {
     attempt++;
 
     try {
-      const result = await fn();
-      return result;
+      return await fn();
     } catch (e: unknown) {
       console.log(`[poll] Attempt ${attempt} failed: ${e}`);
     }

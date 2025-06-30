@@ -57,4 +57,10 @@ export type GatewayFetchFn = (
   body?: GatewayFetchBody,
 ) => Promise<Response>;
 
+export type MockGatewayFetchFn = (
+  method: "GET" | "POST",
+  path: `/v1/accounts/account/${Address}` | "/v2/accounts/siwf",
+  body?: GatewayFetchBody,
+) => Promise<{ payload: AccountResponse; response: Response }>;
+
 export type MsaCreationCallbackFn = (account: AccountResponse) => void;

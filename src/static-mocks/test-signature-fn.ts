@@ -1,4 +1,4 @@
-import { Wallet } from "ethers";
+import { TypedDataField, Wallet } from "ethers";
 import { SignatureFn } from "../types";
 
 /**
@@ -14,14 +14,16 @@ export const TEST_SIGNATURE_FN: SignatureFn = async (request) => {
   const wallet = new Wallet(privateKey);
 
   if (request.method === "personal_sign") {
-    const [address, message] = request.params;
+    const [_address, message] = request.params;
     return await wallet.signMessage(message);
   }
   if (request.method === "eth_signTypedData_v4") {
-    const [address, typedData] = request.params;
+    const [_address, typedData] = request.params;
 
     // Ethers forces this type to be removed
-    const types: any = structuredClone(typedData.types);
+    const types: Record<string, TypedDataField[]> = structuredClone(
+      typedData.types,
+    );
     delete types["EIP712Domain"];
 
     return await wallet.signTypedData(

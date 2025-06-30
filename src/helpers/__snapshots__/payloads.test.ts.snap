@@ -73,26 +73,27 @@ exports[`createSignedGraphKeyPayload > returns the correct payload 1`] = `
 exports[`createSignedLogInPayload > returns the correct payload 1`] = `
 {
   "credentials": [],
-  "payload": {
-    "message": "your-app.com wants you to sign in with your Frequency account:
+  "payloads": [
+    {
+      "payload": {
+        "message": "your-app.com wants you to sign in with your Frequency account:
     frequency:123:0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
     
-    {{#showStatement}}{{statement}}
-    
-    
-    {{/showStatement}}URI: https://your-app.com/signin/callback
+    URI: https://your-app.com/signin/callback
     Version: 1
     Nonce: N6rLwqyz34oUxJEXJ
-    Chain ID: frequency:undefined
+    Chain ID: frequency:123
     Issued At: 2024-10-29T19:17:27.077Z
   ",
-  },
-  "signature": {
-    "algo": "SECP256K1",
-    "encodedValue": "0x1c79df5078d6055ea327e3dfa0afd369de3b418f8d59b26b668a27bd4188afe74ba5e1f9d9018e00d05d5c7fdafe0bbb4017f6dad29c712618c690c58eb891681b",
-    "encoding": "base16",
-  },
-  "type": "login",
+      },
+      "signature": {
+        "algo": "SECP256K1",
+        "encodedValue": "0x46b11fb2ecb500fa20fcf754a981bce71ea090270bee3ebbd9de43ca030b73660629cd3a70bcda1457b100415fcd7ea9c4d221d241ea376eebf975eb0ad2e4f71b",
+        "encoding": "base16",
+      },
+      "type": "login",
+    },
+  ],
   "userPublicKey": {
     "encodedValue": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
     "encoding": "base16",
