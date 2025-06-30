@@ -64,9 +64,9 @@ export async function startSiwf(
     // Generate Recovery Key
 
     // Determine expiration
-    const currentBlock = (await getGatewayChainInfo(gatewayFetchFn))
-      .blocknumber;
-    const expiration = currentBlock + PAYLOAD_EXPIRATION_DELTA;
+    const finalizedBlock = (await getGatewayChainInfo(gatewayFetchFn))
+      .finalized_blocknumber;
+    const expiration = finalizedBlock + PAYLOAD_EXPIRATION_DELTA;
 
     // Sign AddProvider
     const requestedPermissions =
