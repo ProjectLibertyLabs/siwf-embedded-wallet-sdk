@@ -6,7 +6,7 @@ export function mockGatewayNewUserResponse(): GatewaySiwfResponse {
     signUpReferenceId:
       "MjY3MjI3NWZlMGM0NTZmYjY3MWU0ZjQxN2ZiMmY5ODkyYzc1NzNiYQo",
     signUpStatus: "waiting",
-    email: "user@example.com",
+    email: "john.doe@example.com",
     phoneNumber: "555-867-5309",
     graphKey: {
       id: "did:key:z6QNucQV4AF1XMQV4kngbmnBHwYa6mVswPEGrkFrUayhttT1",
@@ -69,15 +69,6 @@ export function mockGatewayNewUserResponse(): GatewaySiwfResponse {
           format: "bare",
           type: "X25519",
           keyType: "dsnp.public-key-key-agreement",
-        },
-        proof: {
-          type: "DataIntegrityProof",
-          verificationMethod:
-            "did:key:z6MktZ15TNtrJCW2gDLFjtjmxEdhCadNCaDizWABYfneMqhA",
-          cryptosuite: "eddsa-rdfc-2022",
-          proofPurpose: "assertionMethod",
-          proofValue:
-            "z2HHWwtWggZfvGqNUk4S5AAbDGqZRFXjpMYAsXXmEksGxTk4DnnkN3upCiL1mhgwHNLkxY3s8YqNyYnmpuvUke7jF",
         },
       },
     ],

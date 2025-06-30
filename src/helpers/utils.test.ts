@@ -19,6 +19,11 @@ describe("userAddressToPublicKey", () => {
 
     const result = userAddressToPublicKey(userAddress);
 
-    expect(result).toStrictEqual(userAddress);
+    expect(result).toStrictEqual({
+      encodedValue: userAddress,
+      encoding: "base16",
+      format: "eip-55",
+      type: "Secp256k1",
+    });
   });
 });
