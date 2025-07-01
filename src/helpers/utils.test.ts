@@ -27,3 +27,9 @@ describe("userAddressToPublicKey", () => {
     });
   });
 });
+
+describe("requestContainsCredentialType", () => {
+  it("blah", async () => {
+    
+  })
+})

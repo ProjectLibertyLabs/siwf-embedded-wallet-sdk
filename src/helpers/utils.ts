@@ -3,6 +3,7 @@ import { u8aToHex } from "@polkadot/util";
 import { addressToEvm } from "@polkadot/util-crypto";
 import { ethers } from "ethers";
 import { SiwfResponsePayloadSignature, SiwfPublicKey } from "../siwf-types";
+import { SiwfCredentialRequest, SiwfSignedRequest } from "@projectlibertylabs/siwf";
 
 /**
  * Validate that a string is a valid hex string
@@ -46,4 +47,17 @@ export function encodedValueToSignature(
     encoding: "base16",
     encodedValue: encodedValue,
   };
+}
+
+// TODO: Write some
+export function requestContainsCredentialType(request: SiwfSignedRequest, targetType: string): boolean {
+  const credentials = request.requestedCredentials
+
+  if (credentials !== undefined) {
+    credentials.forEach((c) => {
+
+    })
+  }
+
+  return false
 }

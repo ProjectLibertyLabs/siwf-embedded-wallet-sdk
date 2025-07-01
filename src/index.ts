@@ -10,7 +10,7 @@ import {
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
 } from "./helpers/payloads.js";
-import { decodeSignedRequest } from "@projectlibertylabs/siwf";
+import { decodeSignedRequest, SiwfResponsePayloadItemActions } from "@projectlibertylabs/siwf";
 import {
   getGatewayAccount,
   getGatewayChainInfo,
@@ -27,6 +27,28 @@ import {
 } from "./helpers/siwf";
 
 const PAYLOAD_EXPIRATION_DELTA = 90; // Matches frequency access config
+
+async function generateAndSignGraphKeyPayload(userAddress: string, expiration: number, signatureFn: SignatureFn): Promise<SiwfResponsePayloadItemActions> {
+  // Generate Graph Key
+  const graphKeyPair = generateGraphKeyPair();
+  // Sign Graph Key Add
+  const addGraphKeyArguments: ItemActionsPayloadArguments = {
+    schemaId: 7,
+    targetHash: 0,
+    expiration,
+    actions: [
+      {
+        type: "addItem",
+        payloadHex: graphKeyPair.publicKey,
+      },
+    ],
+  };
+  return await createSignedGraphKeyPayload(
+    userAddress,
+    signatureFn,
+    addGraphKeyArguments,
+  );
+}
 
 export async function startSiwf(
   userAddress: string,
@@ -59,10 +81,6 @@ export async function startSiwf(
     if (!signUpHandle)
       throw new Error("signUpHandle missing for non-existent account.");
 
-    // Generate Graph Key
-    const graphKeyPair = generateGraphKeyPair();
-    // Generate Recovery Key
-
     // Determine expiration
     const finalizedBlock = (await getGatewayChainInfo(gatewayFetchFn))
       .finalized_blocknumber;
@@ -93,34 +111,25 @@ export async function startSiwf(
       claimHandleArguments,
     );
 
-    // Sign Graph Key Add
-    const addGraphKeyArguments: ItemActionsPayloadArguments = {
-      schemaId: 7,
-      targetHash: 0,
-      expiration,
-      actions: [
-        {
-          type: "addItem",
-          payloadHex: graphKeyPair.publicKey,
-        },
-      ],
-    };
-    const addGraphKeyPayload = await createSignedGraphKeyPayload(
-      userAddress,
-      signatureFn,
-      addGraphKeyArguments,
-    );
-    // Sign Recovery Key
-    // const _ignoreForMockSetRecoveryHashSignature = await signatureFn({
-    //   method: "eth_signTypedData_v4",
-    //   params: [userAddress, addRecoveryHash712],
-    // });
+    // Figure out if graph key was requested
+    const graphKeyRequest = decodedSiwfSignedRequest.requestedCredentials
+    const optionalGraphPayload = if (decodedSiwfSignedRequest.requestedCredentials) {
+      [generateAndSignGraphKeyPayload]
+    } else {
+      []
+    }
 
-    const payloads: SignInPayloads = [
-      addProviderPayload,
-      addGraphKeyPayload,
-      claimHandlePayload,
-    ];
+      // Sign Recovery Key
+      // const _ignoreForMockSetRecoveryHashSignature = await signatureFn({
+      //   method: "eth_signTypedData_v4",
+      //   params: [userAddress, addRecoveryHash712],
+      // });
+
+      const payloads: SignInPayloads = [
+        addProviderPayload,
+        addGraphKeyPayload,
+        claimHandlePayload,
+      ];
 
     const siwfResponse = await createSignInSiwfResponse(userAddress, payloads);
 
