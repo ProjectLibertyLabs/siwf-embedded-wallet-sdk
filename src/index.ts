@@ -3,13 +3,13 @@ import {
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
   SiwfResponsePayload,
+  decodeSignedRequest,
 } from "@projectlibertylabs/siwf";
 import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
 } from "./helpers/payloads.js";
-import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import {
   getGatewayAccount,
   getGatewayChainInfo,
@@ -18,7 +18,10 @@ import {
 } from "./helpers/gateway.js";
 import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
 import { generateGraphKeyPair } from "./helpers/crypto.js";
-import { convertSS58AddressToEthereum } from "./helpers/utils.js";
+import {
+  convertSS58AddressToEthereum,
+  requestContainsCredentialType,
+} from "./helpers/utils.js";
 import { v4 as generateRandomUuid } from "uuid";
 import {
   createLoginSiwfResponse,
@@ -27,6 +30,33 @@ import {
 } from "./helpers/siwf";
 
 const PAYLOAD_EXPIRATION_DELTA = 90; // Matches frequency access config
+
+async function generateAndSignGraphKeyPayload(
+  userAddress: string,
+  expiration: number,
+  signatureFn: SignatureFn,
+): Promise<SiwfResponsePayloadItemActions> {
+  // Generate Graph Key
+  const graphKeyPair = generateGraphKeyPair();
+  // Sign Graph Key Add
+  const addGraphKeyArguments: SiwfResponsePayloadItemActions["payload"] = {
+    schemaId: 7,
+    targetHash: 0,
+    expiration,
+    actions: [
+      {
+        type: "addItem",
+        payloadHex: graphKeyPair.publicKey,
+      },
+    ],
+  };
+
+  return await createSignedGraphKeyPayload(
+    userAddress,
+    signatureFn,
+    addGraphKeyArguments,
+  );
+}
 
 export async function startSiwf(
   userAddress: string,
@@ -40,13 +70,10 @@ export async function startSiwf(
   const decodedSiwfSignedRequest = decodeSignedRequest(
     encodedSiwfSignedRequest,
   );
-  const providerAddress = decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue;
+  const providerAddress =
+    decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue;
 
-  const [
-    userAccount,
-    providerAccount,
-    chainInfo,
-  ] = await Promise.all([
+  const [userAccount, providerAccount, chainInfo] = await Promise.all([
     getGatewayAccount(gatewayFetchFn, userAddress),
     getGatewayAccount(gatewayFetchFn, providerAddress),
     getGatewayChainInfo(gatewayFetchFn),
@@ -62,10 +89,6 @@ export async function startSiwf(
       throw new Error("signUpEmail missing for non-existent account.");
     if (!signUpHandle)
       throw new Error("signUpHandle missing for non-existent account.");
-
-    // Generate Graph Key
-    const graphKeyPair = generateGraphKeyPair();
-    // Generate Recovery Key
 
     // Determine expiration
     const finalizedBlock = chainInfo.finalized_blocknumber;
@@ -96,34 +119,33 @@ export async function startSiwf(
       claimHandleArguments,
     );
 
-    // Sign Graph Key Add
-    const addGraphKeyArguments: SiwfResponsePayloadItemActions["payload"] = {
-      schemaId: 7,
-      targetHash: 0,
-      expiration,
-      actions: [
-        {
-          type: "addItem",
-          payloadHex: graphKeyPair.publicKey,
-        },
-      ],
-    };
-    const addGraphKeyPayload = await createSignedGraphKeyPayload(
-      userAddress,
-      signatureFn,
-      addGraphKeyArguments,
+    // Figure out if graph key was requested
+    const graphKeyRequested = requestContainsCredentialType(
+      decodedSiwfSignedRequest,
+      "VerifiedGraphKeyCredential",
     );
+    const optionalPayloads: SiwfResponsePayload[] = [];
+
+    if (graphKeyRequested) {
+      optionalPayloads.push(
+        await generateAndSignGraphKeyPayload(
+          userAddress,
+          expiration,
+          signatureFn,
+        ),
+      );
+    }
+
     // Sign Recovery Key
     // const _ignoreForMockSetRecoveryHashSignature = await signatureFn({
     //   method: "eth_signTypedData_v4",
     //   params: [userAddress, addRecoveryHash712],
     // });
 
-    const payloads: SiwfResponsePayload[] = [
+    const payloads: SiwfResponsePayload[] = optionalPayloads.concat([
       addProviderPayload,
-      addGraphKeyPayload,
       claimHandlePayload,
-    ];
+    ]);
 
     const siwfResponse = await createSignInSiwfResponse(userAddress, payloads);
 

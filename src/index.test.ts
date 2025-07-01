@@ -7,13 +7,14 @@ import {
   mockNewUserGatewaySiwfResponse,
   mockProviderAccountResponse,
   mockProviderEncodedRequest,
+  mockProviderEncodedRequestWithoutGraphKey,
   mockRetunringUserGatewaySiwfResponse,
   mockReturningUserAccountResponse,
   mockUserAddress,
 } from "../test-mocks/consts";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { AccountResponse } from "./gateway-types";
-import { MsaCreationCallbackFn } from "./types";
+import { EIP712, MsaCreationCallbackFn } from "./types";
 
 const providerControlKey = decodeSignedRequest(mockProviderEncodedRequest)
   .requestedSignatures.publicKey.encodedValue;
@@ -119,6 +120,31 @@ describe("Basic startSiwf test", () => {
     expect(resp.controlKey).toEqual(mockUserAddress);
     expect(resp.msaId).toEqual(mockNewUserGatewaySiwfResponse.msaId);
     expect(resp).toMatchSnapshot();
+  });
+
+  it("Can sign up without a graph key", async () => {
+    const payloadsToSign: any[] = []; // TODO: Use correct type when CAIP122 is exported
+    const resp = await startSiwf(
+      mockUserAddress,
+      async (payload) => {
+        payloadsToSign.push(payload);
+        return "0xdef0";
+      },
+      mockGatewayFetchFactory(
+        mockNewUserAccountResponse,
+        mockProviderAccountResponse,
+        mockNewUserGatewaySiwfResponse,
+        mockChainInfoResponse,
+        providerControlKey,
+      ),
+      mockProviderEncodedRequestWithoutGraphKey,
+      "JohnDoe",
+      "john.doe@example.com",
+    );
+
+    expect(resp.controlKey).toEqual(mockUserAddress);
+    expect(resp.msaId).toEqual(mockNewUserGatewaySiwfResponse.msaId);
+    expect(payloadsToSign).toMatchSnapshot();
   });
 
   it("Successfully calls msaCreationCallbackFn", async () => {
