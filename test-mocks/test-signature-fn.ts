@@ -1,5 +1,5 @@
 import { TypedDataField, Wallet } from "ethers";
-import { SignatureFn } from "../types";
+import { SignatureFn } from "../src/types";
 
 /**
  * Test signature function

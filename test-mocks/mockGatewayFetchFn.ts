@@ -1,9 +1,9 @@
-import { GatewayFetchFn } from "../types";
+import { GatewayFetchFn } from "../src/types";
 import {
   AccountResponse,
   ChainInfoResponse,
   GatewaySiwfResponse,
-} from "../gateway-types";
+} from "../src/gateway-types";
 
 export const mockGatewayFetchFactory = (
   hasAccountResponse: AccountResponse | null,
@@ -11,6 +11,7 @@ export const mockGatewayFetchFactory = (
   gatewaySiwfResponse: GatewaySiwfResponse,
   chainInfoResponse: ChainInfoResponse,
   providerControlKey: string,
+  finalResponse: { response: AccountResponse | null } = { response: null },
 ): GatewayFetchFn => {
   return async (method, path) => {
     if (path === "/v2/accounts/siwf") {
@@ -29,7 +30,7 @@ export const mockGatewayFetchFactory = (
           json: async () => {
             if (path.includes(providerControlKey))
               return providerAccountResponse;
-            return hasAccountResponse;
+            return finalResponse.response || hasAccountResponse;
           },
         } as Response;
     }

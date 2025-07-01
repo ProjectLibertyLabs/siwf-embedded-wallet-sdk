@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { startSiwf } from "./index.js";
-import { mockGatewayFetchFactory } from "./tests/mockGatewayFetchFn";
+import { mockGatewayFetchFactory } from "../test-mocks/mockGatewayFetchFn";
 import {
   mockChainInfoResponse,
   mockNewUserAccountResponse,
@@ -10,8 +10,10 @@ import {
   mockRetunringUserGatewaySiwfResponse,
   mockReturningUserAccountResponse,
   mockUserAddress,
-} from "./tests/consts";
+} from "../test-mocks/consts";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
+import { AccountResponse } from "./gateway-types";
+import { MsaCreationCallbackFn } from "./types";
 
 const providerControlKey = decodeSignedRequest(mockProviderEncodedRequest)
   .requestedSignatures.publicKey.encodedValue;
@@ -117,5 +119,43 @@ describe("Basic startSiwf test", () => {
     expect(resp.controlKey).toEqual(mockUserAddress);
     expect(resp.msaId).toEqual(mockNewUserGatewaySiwfResponse.msaId);
     expect(resp).toMatchSnapshot();
+  });
+
+  it("Successfully calls msaCreationCallbackFn", async () => {
+    vi.useFakeTimers();
+    const mockMsaCreationCallbackFn = vi.fn();
+
+    // initial get account response - returns null because there is no account yet
+    const mockFinalResponse: { response: AccountResponse | null } = {
+      response: mockNewUserAccountResponse,
+    };
+
+    const resp = await startSiwf(
+      mockUserAddress,
+      async () => "0xdef0",
+      mockGatewayFetchFactory(
+        mockFinalResponse.response,
+        mockProviderAccountResponse,
+        mockNewUserGatewaySiwfResponse,
+        mockChainInfoResponse,
+        providerControlKey,
+        mockFinalResponse,
+      ),
+      mockProviderEncodedRequest,
+      "JohnDoe",
+      "john.doe@example.com",
+      mockMsaCreationCallbackFn,
+    );
+    expect(resp).toBeDefined();
+    // mutate the response to mock the get account call from within the polling function - returns a valid account
+    mockFinalResponse.response = mockReturningUserAccountResponse;
+
+    await vi.waitFor(() => {
+      // wait for the poll function to execute
+      vi.advanceTimersByTime(6000);
+      expect(mockMsaCreationCallbackFn).toHaveBeenCalledWith(
+        mockReturningUserAccountResponse,
+      );
+    });
   });
 });
