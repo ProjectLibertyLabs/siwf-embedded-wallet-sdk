@@ -2,8 +2,8 @@ import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
 import { ChainInfoResponse, GatewaySiwfResponse } from "../gateway-types.js";
 import { GatewayFetchError } from "../error-types.js";
 import { stringToBase64URL } from "src/base64url";
-import { SiwfResponse } from "@projectlibertylabs/siwf";
-import { getGatewayAccount } from "../index";
+import { SiwfResponse } from "src/siwf-types";
+import { getAccountForAccountId } from "../index";
 
 /**
  * Fetches the chain info (with current block number) via Gateway
@@ -70,14 +70,14 @@ export async function poll<T>(
 
 export async function pollForAccount(
   gatewayFetchFn: GatewayFetchFn,
-  userAddress: string,
+  accountId: string,
   msaCreationCallbackFn: MsaCreationCallbackFn,
   requestDelaySeconds: number = 5,
   timeoutSeconds: number = 600, // 10 minutes
 ) {
   const response = await poll(
     async () => {
-      const account = await getGatewayAccount(gatewayFetchFn, userAddress);
+      const account = await getAccountForAccountId(gatewayFetchFn, accountId);
       if (account === null) {
         throw Error("Account does not (yet) exist.");
       } else {

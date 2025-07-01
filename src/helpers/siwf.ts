@@ -1,6 +1,6 @@
 import { SignatureFn } from "../types";
 import { SiwfResponsePayload, SiwfResponse } from "@projectlibertylabs/siwf";
-import { encodedValueToSignature, userAddressToPublicKey } from "./utils";
+import { encodedValueToSignature, accountIdToPublicKey } from "./utils";
 
 export interface CreateLoginSiwfResponseArguments
   extends Record<string, unknown> {
@@ -13,25 +13,25 @@ export interface CreateLoginSiwfResponseArguments
 }
 
 export async function createLoginSiwfResponse(
-  userAddress: string,
+  accountId: string,
   signatureFn: SignatureFn,
   payloadArguments: CreateLoginSiwfResponseArguments,
 ): Promise<SiwfResponse> {
   const loginCaip122 = `${payloadArguments.domain} wants you to sign in with your Frequency account:
-frequency:${payloadArguments.chainId}:${userAddress}
-
-URI: ${payloadArguments.uri}
-Version: ${payloadArguments.version}
-Nonce: ${payloadArguments.nonce}
-Chain ID: frequency:${payloadArguments.chainId}
-Issued At: ${payloadArguments.issuedAt}`;
+    frequency:${payloadArguments.chainId}:${accountId}
+    
+    URI: ${payloadArguments.uri}
+    Version: ${payloadArguments.version}
+    Nonce: ${payloadArguments.nonce}
+    Chain ID: frequency:${payloadArguments.chainId}
+    Issued At: ${payloadArguments.issuedAt}`;
 
   const encodedValue = await signatureFn({
     method: "personal_sign",
-    params: [userAddress, loginCaip122],
+    params: [accountId, loginCaip122],
   });
 
-  const userPublicKey = userAddressToPublicKey(userAddress);
+  const userPublicKey = accountIdToPublicKey(accountId);
 
   const signature = encodedValueToSignature(encodedValue);
 
@@ -51,10 +51,10 @@ Issued At: ${payloadArguments.issuedAt}`;
 }
 
 export async function createSignInSiwfResponse(
-  userAddress: string,
+  accountId: string,
   payloads: SiwfResponsePayload[],
 ): Promise<SiwfResponse> {
-  const userPublicKey = userAddressToPublicKey(userAddress);
+  const userPublicKey = accountIdToPublicKey(accountId);
   return {
     userPublicKey,
     payloads,

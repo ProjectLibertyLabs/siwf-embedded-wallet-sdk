@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { getGatewayAccount, startSiwf } from "./index.js";
+import { getAccountForAccountId, startSiwf } from "./index.js";
 import { mockGatewayFetchFactory } from "../test-mocks/mockGatewayFetchFn";
 import {
   mockChainInfoResponse,
@@ -10,7 +10,7 @@ import {
   mockProviderEncodedRequestWithoutGraphKey,
   mockRetunringUserGatewaySiwfResponse,
   mockReturningUserAccountResponse,
-  mockUserAddress,
+  mockAccountId,
 } from "../test-mocks/consts";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { AccountResponse } from "./gateway-types";
@@ -23,7 +23,7 @@ const providerControlKey = decodeSignedRequest(mockProviderEncodedRequest)
 describe("Basic startSiwf test", () => {
   it("Can login", async () => {
     const resp = await startSiwf(
-      mockUserAddress,
+      mockAccountId,
       async () => "0xdef0",
       mockGatewayFetchFactory(
         mockReturningUserAccountResponse,
@@ -37,7 +37,7 @@ describe("Basic startSiwf test", () => {
       "john.doe@example.com",
       () => {},
     );
-    expect(resp.controlKey).toEqual(mockUserAddress);
+    expect(resp.controlKey).toEqual(mockAccountId);
     expect(resp.msaId).toEqual(mockRetunringUserGatewaySiwfResponse.msaId);
     expect(resp).toMatchSnapshot();
   });
@@ -45,7 +45,7 @@ describe("Basic startSiwf test", () => {
   it("Throws if provider account not found", async () => {
     await expect(
       startSiwf(
-        mockUserAddress,
+        mockAccountId,
         async () => "0xdef0",
         mockGatewayFetchFactory(
           mockReturningUserAccountResponse,
@@ -65,7 +65,7 @@ describe("Basic startSiwf test", () => {
   it("If new user, throws if no signUpHandle", async () => {
     await expect(
       startSiwf(
-        mockUserAddress,
+        mockAccountId,
         async () => "0xdef0",
         mockGatewayFetchFactory(
           mockNewUserAccountResponse,
@@ -85,7 +85,7 @@ describe("Basic startSiwf test", () => {
   it("If new user, throws if no signUpEmail", async () => {
     await expect(
       startSiwf(
-        mockUserAddress,
+        mockAccountId,
         async () => "0xdef0",
         mockGatewayFetchFactory(
           mockNewUserAccountResponse,
@@ -104,7 +104,7 @@ describe("Basic startSiwf test", () => {
 
   it("Can sign up", async () => {
     const resp = await startSiwf(
-      mockUserAddress,
+      mockAccountId,
       async () => "0xdef0",
       mockGatewayFetchFactory(
         mockNewUserAccountResponse,
@@ -118,7 +118,7 @@ describe("Basic startSiwf test", () => {
       "john.doe@example.com",
     );
 
-    expect(resp.controlKey).toEqual(mockUserAddress);
+    expect(resp.controlKey).toEqual(mockAccountId);
     expect(resp.msaId).toEqual(mockNewUserGatewaySiwfResponse.msaId);
     expect(resp).toMatchSnapshot();
   });
@@ -158,7 +158,7 @@ describe("Basic startSiwf test", () => {
     };
 
     const resp = await startSiwf(
-      mockUserAddress,
+      mockAccountId,
       async () => "0xdef0",
       mockGatewayFetchFactory(
         mockFinalResponse.response,
@@ -195,7 +195,7 @@ describe("getAccountForAccountId", () => {
     };
     const address = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
 
-    const result = await getGatewayAccount(fetchFn, address);
+    const result = await getAccountForAccountId(fetchFn, address);
 
     expect(result).toStrictEqual(body);
   });
@@ -205,7 +205,7 @@ describe("getAccountForAccountId", () => {
     };
     const address = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
 
-    const result = await getGatewayAccount(fetchFn, address);
+    const result = await getAccountForAccountId(fetchFn, address);
 
     expect(result).toStrictEqual(null);
   });
@@ -216,7 +216,7 @@ describe("getAccountForAccountId", () => {
     const address = "#@41i9=/?&8";
 
     try {
-      await getGatewayAccount(fetchFn, address);
+      await getAccountForAccountId(fetchFn, address);
       expect.fail("No error thrown");
     } catch (err) {
       expect(err).toBeInstanceOf(GatewayFetchError);
@@ -230,7 +230,7 @@ describe("getAccountForAccountId", () => {
     const address = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
 
     try {
-      await getGatewayAccount(fetchFn, address);
+      await getAccountForAccountId(fetchFn, address);
       expect.fail("No error thrown");
     } catch (err) {
       expect(err).toBeInstanceOf(GatewayFetchError);

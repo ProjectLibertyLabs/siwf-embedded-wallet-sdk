@@ -6,7 +6,7 @@ import {
 import { mockGatewayNewUserResponse } from "./gateway-new-user";
 
 // Matching mock user addresses
-export const mockUserAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+export const mockAccountId = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
 export const mockControlKey =
   "5HYRCKHYJN9z5xUtfFkyMj4JUhsAwWyvuU8vKB1FcnYTf9ZQ";
 

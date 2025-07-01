@@ -13,7 +13,7 @@ import {
   postGatewaySiwf,
 } from "./gateway";
 import { decodeSignedRequest, SiwfResponse } from "@projectlibertylabs/siwf";
-import { getGatewayAccount } from "../index";
+import { getAccountForAccountId } from "../index";
 
 describe("getGatewayBlockInfo", () => {
   it("returns correct info", async () => {
@@ -199,7 +199,7 @@ it("gets a correctly parses encoded signed requests, then gets provider account"
   const address = requestedSignatures.publicKey.encodedValue;
 
   try {
-    const providerAccount = await getGatewayAccount(fetchFn, address);
+    const providerAccount = await getAccountForAccountId(fetchFn, address);
     expect(providerAccount).toEqual(body);
   } catch (err) {
     expect(err).toBeInstanceOf(GatewayFetchError);

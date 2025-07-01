@@ -236,17 +236,17 @@ export async function startSiwf(
  * Fetches a user's account information (if present) from Gateway Services
  *
  * @param gatewayFetchFn Callback for performing request to gateway services
- * @param userAddress - the public key of the user who wishes to sign in
+ * @param accountId - the public key of the user who wishes to sign in
  * @returns An 'account response' when the user's account exists, and `null` otherwise
  * @throws `GatewayFetchError` when the request fails
  */
-export async function getGatewayAccount(
+export async function getAccountForAccountId(
   gatewayFetchFn: GatewayFetchFn,
-  userAddress: string,
+  accountId: string,
 ): Promise<AccountResponse | null> {
   const response = await gatewayFetchFn(
     "GET",
-    `/v1/accounts/account/${userAddress}`,
+    `/v1/accounts/account/${accountId}`,
   );
   if (response.ok) {
     return (await response.json()) as AccountResponse;
