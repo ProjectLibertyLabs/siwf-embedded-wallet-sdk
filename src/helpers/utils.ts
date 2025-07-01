@@ -1,8 +1,8 @@
 import { HexString } from "@frequency-chain/ethereum-utils";
 import { u8aToHex } from "@polkadot/util";
 import { addressToEvm } from "@polkadot/util-crypto";
-import { ethers } from "ethers";
 import { SiwfResponsePayloadSignature, SiwfPublicKey } from "../siwf-types";
+import { toChecksumAddress } from "ethereum-checksum-address";
 
 /**
  * Validate that a string is a valid hex string
@@ -19,7 +19,7 @@ export function isHexString(value: string): value is HexString {
 export function convertSS58AddressToEthereum<T extends { controlKey: string }>(
   objectContainingControlKey: T,
 ): T {
-  const ethereumAddress = ethers.getAddress(
+  const ethereumAddress = toChecksumAddress(
     u8aToHex(addressToEvm(objectContainingControlKey.controlKey)),
   );
 
@@ -31,7 +31,7 @@ export function convertSS58AddressToEthereum<T extends { controlKey: string }>(
 
 export function userAddressToPublicKey(userAddress: string): SiwfPublicKey {
   return {
-    encodedValue: ethers.getAddress(userAddress),
+    encodedValue: toChecksumAddress(userAddress),
     encoding: "base16",
     format: "eip-55",
     type: "Secp256k1",
