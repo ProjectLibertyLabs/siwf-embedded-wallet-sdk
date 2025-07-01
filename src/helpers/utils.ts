@@ -47,3 +47,18 @@ export function encodedValueToSignature(
     encodedValue: encodedValue,
   };
 }
+
+export function requestContainsCredentialType(
+  request: SiwfSignedRequest,
+  targetType: string,
+): boolean {
+  if (!request.requestedCredentials) return false;
+
+  return request.requestedCredentials.some((credRequest) => {
+    if ("anyOf" in credRequest) {
+      return credRequest.anyOf.some((cred) => cred.type === targetType);
+    } else {
+      return credRequest.type === targetType;
+    }
+  });
+}
