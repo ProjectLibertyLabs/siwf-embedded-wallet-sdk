@@ -3,7 +3,7 @@
 exports[`Generate Mock Data > Generate the mocks for 712 Add Delegation 1`] = `
 {
   "domain": {
-    "chainId": "0x190f1b44",
+    "chainId": "0x082B",
     "name": "Frequency",
     "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
     "version": "1",
@@ -59,7 +59,7 @@ exports[`Generate Mock Data > Generate the mocks for 712 Add Delegation 1`] = `
 exports[`Generate Mock Data > Generate the mocks for 712 Add Graph Key 1`] = `
 {
   "domain": {
-    "chainId": "0x190f1b44",
+    "chainId": "0x082B",
     "name": "Frequency",
     "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
     "version": "1",
@@ -135,7 +135,7 @@ exports[`Generate Mock Data > Generate the mocks for 712 Add Graph Key 1`] = `
 exports[`Generate Mock Data > Generate the mocks for 712 Handle Claim 1`] = `
 {
   "domain": {
-    "chainId": "0x190f1b44",
+    "chainId": "0x082B",
     "name": "Frequency",
     "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
     "version": "1",
