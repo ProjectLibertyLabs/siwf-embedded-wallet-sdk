@@ -7,7 +7,7 @@ exports[`createSignedAddProviderPayload > returns the correct payload 1`] = `
     "pallet": "msa",
   },
   "payload": {
-    "authorizedMsaId": "1",
+    "authorizedMsaId": 1,
     "expiration": 100,
     "schemaIds": [
       8,
@@ -78,7 +78,7 @@ exports[`createSignedLogInPayload > returns the correct payload 1`] = `
       "payload": {
         "message": "your-app.com wants you to sign in with your Frequency account:
     frequency:123:0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
-    
+
     URI: https://your-app.com/signin/callback
     Version: 1
     Nonce: N6rLwqyz34oUxJEXJ

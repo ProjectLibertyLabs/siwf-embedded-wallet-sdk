@@ -1,10 +1,9 @@
 import { GatewaySiwfResponse } from "./gateway-types.js";
 import {
-  ClaimHandlePayloadArguments,
-  CreateLoginSiwfResponseArguments,
-  ItemActionsPayloadArguments,
-  SignInPayloads,
-} from "./siwf-types.js";
+  SiwfResponsePayloadClaimHandle,
+  SiwfResponsePayloadItemActions,
+  SiwfResponsePayload,
+} from "@projectlibertylabs/siwf";
 import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
@@ -23,6 +22,7 @@ import { convertSS58AddressToEthereum } from "./helpers/utils.js";
 import { v4 as generateRandomUuid } from "uuid";
 import {
   createLoginSiwfResponse,
+  CreateLoginSiwfResponseArguments,
   createSignInSiwfResponse,
 } from "./helpers/siwf";
 
@@ -72,7 +72,7 @@ export async function startSiwf(
     const requestedPermissions =
       decodedSiwfSignedRequest.requestedSignatures.payload.permissions;
     const addProviderArguments = {
-      authorizedMsaId: providerAccount.msaId,
+      authorizedMsaId: Number(providerAccount.msaId),
       schemaIds: requestedPermissions,
       expiration,
     };
@@ -83,7 +83,7 @@ export async function startSiwf(
     );
 
     // Sign Handle
-    const claimHandleArguments: ClaimHandlePayloadArguments = {
+    const claimHandleArguments: SiwfResponsePayloadClaimHandle["payload"] = {
       baseHandle: signUpHandle,
       expiration,
     };
@@ -94,7 +94,7 @@ export async function startSiwf(
     );
 
     // Sign Graph Key Add
-    const addGraphKeyArguments: ItemActionsPayloadArguments = {
+    const addGraphKeyArguments: SiwfResponsePayloadItemActions["payload"] = {
       schemaId: 7,
       targetHash: 0,
       expiration,
@@ -116,7 +116,7 @@ export async function startSiwf(
     //   params: [userAddress, addRecoveryHash712],
     // });
 
-    const payloads: SignInPayloads = [
+    const payloads: SiwfResponsePayload[] = [
       addProviderPayload,
       addGraphKeyPayload,
       claimHandlePayload,
