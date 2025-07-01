@@ -1,7 +1,7 @@
 # SIWF Embedded Wallet SDK
 
 ![NPM Version](https://img.shields.io/npm/v/%40projectlibertylabs%2Fsiwf-embedded-wallet-sdk)
-## ✨ Overview
+## Overview
 
 This SDK handles:
 
@@ -14,7 +14,7 @@ It’s ideal for Web3 applications that want to support **embedded wallet** expe
 
 ---
 
-## 📦 Installation
+## Installation
 
 Recommended Node version is **v22.16.0**.
 ```bash
@@ -23,7 +23,7 @@ npm install @projectlibertylabs/siwf-embedded-wallet-sdk
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 ```ts
 import { startSiwf } from "@projectlibertylabs/siwf-embedded-wallet-sdk";
 
@@ -40,7 +40,7 @@ const startSiwfResponse = await startSiwf(
 
 ---
 
-## 📋 `startSiwf` Parameters
+## `startSiwf` Parameters
 
 | Parameter             | Type                    | Required | Description                                                                            |
 | --------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------- |
@@ -54,7 +54,7 @@ const startSiwfResponse = await startSiwf(
 
 ---
 
-## 📚 Function Details
+## Function Details
 
 ### Signature Function
 
@@ -112,7 +112,7 @@ type MsaCreationCallbackFn = (account: AccountResponse) => void;
 
 ---
 
-## 🧠 How It Works
+## How It Works
 
 1. Checks if the user has an existing MSA.
 2. If not:
@@ -129,7 +129,7 @@ type MsaCreationCallbackFn = (account: AccountResponse) => void;
 
 ---
 
-## 🔧 What Does It Mock (in Tests)?
+## What Does It Mock (in Tests)?
 
 * ✅ Calls the `SignatureFn` and `GatewayFetchFn` with correct parameters
 * ❌ Does **not** use real responses from `SignatureFn` or `GatewayFetchFn`
@@ -138,7 +138,7 @@ type MsaCreationCallbackFn = (account: AccountResponse) => void;
 
 ---
 
-## 🧹 Development Scripts
+## Development Scripts
 
 * `npm run build` – Build all outputs (ESM + CJS + types)
 * `npm run format` – Typecheck, format, and lint
@@ -146,7 +146,7 @@ type MsaCreationCallbackFn = (account: AccountResponse) => void;
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Tests are written using **Vitest**.
 
