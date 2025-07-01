@@ -13,6 +13,7 @@ import {
   postGatewaySiwf,
 } from "./gateway";
 import { decodeSignedRequest, SiwfResponse } from "@projectlibertylabs/siwf";
+import { getGatewayAccount } from "../index";
 
 describe("getGatewayBlockInfo", () => {
   it("returns correct info", async () => {
