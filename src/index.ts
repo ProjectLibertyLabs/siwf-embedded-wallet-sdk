@@ -37,22 +37,26 @@ export async function startSiwf(
   signUpEmail?: string,
   msaCreationCallbackFn?: MsaCreationCallbackFn,
 ): Promise<GatewaySiwfResponse> {
-  // Is address already an MSA?
-  const hasAccount = await getGatewayAccount(gatewayFetchFn, userAddress);
-
   const decodedSiwfSignedRequest = decodeSignedRequest(
     encodedSiwfSignedRequest,
   );
-  const providerAccount = await getGatewayAccount(
-    gatewayFetchFn,
-    decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue,
-  );
+  const providerAddress = decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue;
+
+  const [
+    userAccount,
+    providerAccount,
+    chainInfo,
+  ] = await Promise.all([
+    getGatewayAccount(gatewayFetchFn, userAddress),
+    getGatewayAccount(gatewayFetchFn, providerAddress),
+    getGatewayChainInfo(gatewayFetchFn),
+  ]);
 
   if (providerAccount === null) {
     throw new Error("Unable to find provider account!");
   }
 
-  if (!hasAccount) {
+  if (!userAccount) {
     // Validate incoming values
     if (!signUpEmail)
       throw new Error("signUpEmail missing for non-existent account.");
@@ -64,8 +68,7 @@ export async function startSiwf(
     // Generate Recovery Key
 
     // Determine expiration
-    const finalizedBlock = (await getGatewayChainInfo(gatewayFetchFn))
-      .finalized_blocknumber;
+    const finalizedBlock = chainInfo.finalized_blocknumber;
     const expiration = finalizedBlock + PAYLOAD_EXPIRATION_DELTA;
 
     // Sign AddProvider
@@ -139,7 +142,7 @@ export async function startSiwf(
     return convertSS58AddressToEthereum(gatewaySiwfResponse);
   } else {
     // Process Login
-    const chainId = (await getGatewayChainInfo(gatewayFetchFn)).genesis;
+    const chainId = chainInfo.genesis;
     const loginPayloadArguments: CreateLoginSiwfResponseArguments = {
       domain: new URL(
         decodedSiwfSignedRequest.requestedSignatures.payload.callback,
