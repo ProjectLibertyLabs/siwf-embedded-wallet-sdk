@@ -80,3 +80,117 @@ exports[`Basic startSiwf test > Can sign up 1`] = `
   "signUpStatus": "waiting",
 }
 `;
+
+exports[`Basic startSiwf test > Can sign up without a graph key 1`] = `
+[
+  {
+    "method": "eth_signTypedData_v4",
+    "params": [
+      "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+      {
+        "domain": {
+          "chainId": "0x190f1b44",
+          "name": "Frequency",
+          "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+          "version": "1",
+        },
+        "message": {
+          "authorizedMsaId": "1",
+          "expiration": 122,
+          "schemaIds": [
+            5,
+            7,
+            8,
+            9,
+            10,
+          ],
+        },
+        "primaryType": "AddProvider",
+        "types": {
+          "AddProvider": [
+            {
+              "name": "authorizedMsaId",
+              "type": "uint64",
+            },
+            {
+              "name": "schemaIds",
+              "type": "uint16[]",
+            },
+            {
+              "name": "expiration",
+              "type": "uint32",
+            },
+          ],
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string",
+            },
+            {
+              "name": "version",
+              "type": "string",
+            },
+            {
+              "name": "chainId",
+              "type": "uint256",
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    "method": "eth_signTypedData_v4",
+    "params": [
+      "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+      {
+        "domain": {
+          "chainId": "0x190f1b44",
+          "name": "Frequency",
+          "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+          "version": "1",
+        },
+        "message": {
+          "expiration": 122,
+          "handle": "JohnDoe",
+        },
+        "primaryType": "ClaimHandlePayload",
+        "types": {
+          "ClaimHandlePayload": [
+            {
+              "name": "handle",
+              "type": "string",
+            },
+            {
+              "name": "expiration",
+              "type": "uint32",
+            },
+          ],
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string",
+            },
+            {
+              "name": "version",
+              "type": "string",
+            },
+            {
+              "name": "chainId",
+              "type": "uint256",
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address",
+            },
+          ],
+        },
+      },
+    ],
+  },
+]
+`;
