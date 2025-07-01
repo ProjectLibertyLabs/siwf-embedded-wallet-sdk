@@ -10,7 +10,7 @@ import {
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
 } from "../siwf-types";
-import { TEST_SIGNATURE_FN } from "../../test-mocks/test-signature-fn";
+import { TEST_SIGNATURE_FN } from "../../test-mocks/test-signature-fn.js";
 import { createLoginSiwfResponse } from "./siwf";
 
 describe("createSignedAddProviderPayload", () => {
