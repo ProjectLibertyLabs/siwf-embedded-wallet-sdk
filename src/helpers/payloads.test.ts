@@ -5,13 +5,15 @@ import {
   createSignedGraphKeyPayload,
 } from "./payloads";
 import {
-  CreateLoginSiwfResponseArguments,
   SiwfResponse,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
-} from "../siwf-types";
+} from "@projectlibertylabs/siwf";
 import { TEST_SIGNATURE_FN } from "../../test-mocks/test-signature-fn.js";
-import { createLoginSiwfResponse } from "./siwf";
+import {
+  createLoginSiwfResponse,
+  CreateLoginSiwfResponseArguments,
+} from "./siwf";
 
 describe("createSignedAddProviderPayload", () => {
   it("returns the correct payload", async () => {
@@ -20,7 +22,7 @@ describe("createSignedAddProviderPayload", () => {
 
     const payload: SiwfResponsePayloadAddProvider =
       await createSignedAddProviderPayload(userAddress, signatureFn, {
-        authorizedMsaId: "1",
+        authorizedMsaId: 1,
         schemaIds: [8, 9, 10, 15],
         expiration: 100,
       });

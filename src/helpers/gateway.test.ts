@@ -13,8 +13,7 @@ import {
   pollForAccount,
   postGatewaySiwf,
 } from "./gateway";
-import { decodeSignedRequest } from "@projectlibertylabs/siwf";
-import { SiwfResponse } from "../siwf-types";
+import { decodeSignedRequest, SiwfResponse } from "@projectlibertylabs/siwf";
 
 describe("getGatewayAccount", () => {
   it("returns info for an existing user", async () => {

@@ -6,7 +6,7 @@ import {
 } from "../gateway-types.js";
 import { GatewayFetchError } from "../error-types.js";
 import { stringToBase64URL } from "src/base64url";
-import { SiwfResponse } from "src/siwf-types";
+import { SiwfResponse } from "@projectlibertylabs/siwf";
 
 /**
  * Fetches a user's account information (if present) from Gateway Services

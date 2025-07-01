@@ -1,7 +1,7 @@
 import { HexString } from "@frequency-chain/ethereum-utils";
 import { u8aToHex } from "@polkadot/util";
 import { addressToEvm } from "@polkadot/util-crypto";
-import { SiwfResponsePayloadSignature, SiwfPublicKey } from "../siwf-types";
+import { SiwfSignedRequest, SiwfPublicKey } from "@projectlibertylabs/siwf";
 import { toChecksumAddress } from "ethereum-checksum-address";
 
 /**
@@ -40,7 +40,7 @@ export function userAddressToPublicKey(userAddress: string): SiwfPublicKey {
 
 export function encodedValueToSignature(
   encodedValue: string,
-): SiwfResponsePayloadSignature {
+): SiwfSignedRequest["requestedSignatures"]["signature"] {
   return {
     algo: "SECP256K1",
     encoding: "base16",

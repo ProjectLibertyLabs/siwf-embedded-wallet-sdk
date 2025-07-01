@@ -6,25 +6,22 @@ import {
 } from "@frequency-chain/ethereum-utils";
 import { EIP712Document, SignatureFn } from "../types";
 import {
-  AddProviderPayloadArguments,
-  ClaimHandlePayloadArguments,
-  ItemActionsPayloadArguments,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
   SiwfResponsePayloadItemActions,
-} from "src/siwf-types";
+} from "@projectlibertylabs/siwf";
 import { encodedValueToSignature, isHexString } from "./utils";
 
 export async function createSignedAddProviderPayload(
   userAddress: string,
   signatureFn: SignatureFn,
-  payloadArguments: AddProviderPayloadArguments,
+  payloadArguments: SiwfResponsePayloadAddProvider["payload"],
   extrinsic:
     | "createSponsoredAccountWithDelegation"
     | "grantDelegation" = "createSponsoredAccountWithDelegation",
 ): Promise<SiwfResponsePayloadAddProvider> {
   const addProviderEip712 = getEip712BrowserRequestAddProvider(
-    payloadArguments.authorizedMsaId,
+    BigInt(payloadArguments.authorizedMsaId),
     payloadArguments.schemaIds,
     payloadArguments.expiration,
   ) as EIP712Document;
@@ -49,7 +46,7 @@ export async function createSignedAddProviderPayload(
 export async function createSignedClaimHandlePayload(
   userAddress: string,
   signatureFn: SignatureFn,
-  payloadArguments: ClaimHandlePayloadArguments,
+  payloadArguments: SiwfResponsePayloadClaimHandle["payload"],
 ): Promise<SiwfResponsePayloadClaimHandle> {
   const claimHandleEip712 = getEip712BrowserRequestClaimHandlePayload(
     payloadArguments.baseHandle,
@@ -76,7 +73,7 @@ export async function createSignedClaimHandlePayload(
 export async function createSignedGraphKeyPayload(
   userAddress: string,
   signatureFn: SignatureFn,
-  payloadArguments: ItemActionsPayloadArguments,
+  payloadArguments: SiwfResponsePayloadItemActions["payload"],
 ): Promise<SiwfResponsePayloadItemActions> {
   const actions: ItemizedAction[] = payloadArguments.actions.map(
     ({ payloadHex }) => {
