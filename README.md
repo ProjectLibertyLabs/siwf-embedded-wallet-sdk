@@ -129,15 +129,6 @@ type MsaCreationCallbackFn = (account: AccountResponse) => void;
 
 ---
 
-## What Does It Mock (in Tests)?
-
-* ✅ Calls the `SignatureFn` and `GatewayFetchFn` with correct parameters
-* ❌ Does **not** use real responses from `SignatureFn` or `GatewayFetchFn`
-* ❌ Uses static mock requests that may **not** validate in your system
-* ❌ Responses are **static** and **do not** include the Recovery Secret or original credential values
-
----
-
 ## Development Scripts
 
 * `npm run build` – Build all outputs (ESM + CJS + types)
