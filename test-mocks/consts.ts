@@ -2,8 +2,8 @@ import {
   AccountResponse,
   ChainInfoResponse,
   GatewaySiwfResponse,
-} from "../gateway-types";
-import { mockGatewayNewUserResponse } from "../static-mocks/gateway-new-user";
+} from "../src/gateway-types";
+import { mockGatewayNewUserResponse } from "./gateway-new-user";
 
 // Matching mock user addresses
 export const mockUserAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
