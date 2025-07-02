@@ -4,7 +4,8 @@ import {
   getEip712BrowserRequestItemizedSignaturePayloadV2,
   ItemizedAction,
 } from "@frequency-chain/ethereum-utils";
-import { EIP712Document, SignatureFn } from "../types";
+import { SignatureFn } from "../types/param-types";
+import { EIP712Document } from "../types/signed-document-types";
 import {
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,

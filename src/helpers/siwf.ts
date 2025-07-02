@@ -1,4 +1,4 @@
-import { SignatureFn } from "../types";
+import { SignatureFn } from "../types/param-types";
 import { SiwfResponsePayload, SiwfResponse } from "@projectlibertylabs/siwf";
 import { encodedValueToSignature, accountIdToPublicKey } from "./utils";
 

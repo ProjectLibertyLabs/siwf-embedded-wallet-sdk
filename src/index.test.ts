@@ -13,9 +13,9 @@ import {
   mockAccountId,
 } from "../test-mocks/consts";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
-import { AccountResponse } from "./gateway-types";
-import { EIP712, GatewayFetchFn, MsaCreationCallbackFn } from "./types";
-import { GatewayFetchError } from "./error-types";
+import { AccountResponse } from "./types/response-types";
+import { GatewayFetchFn } from "./types/param-types";
+import { GatewayFetchError } from "./types/error-types";
 
 const providerControlKey = decodeSignedRequest(mockProviderEncodedRequest)
   .requestedSignatures.publicKey.encodedValue;

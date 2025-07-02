@@ -47,14 +47,14 @@ const startSiwfResponse = await startSiwf(
 ## `startSiwf` Parameters
 
 | Parameter             | Type                    | Required | Description                                                                            |
-| --------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------- |
+| --------------------- | ----------------------- | -------- |----------------------------------------------------------------------------------------|
 | `accountId`           | `string`                | ✅       | The wallet address of the user                                                         |
 | `signatureFn`         | `SignatureFn`           | ✅       | Connects your embedded wallet to the SDK (see below)                                   |
 | `gatewayFetchFn`      | `GatewayFetchFn`        | ✅       | Connects the SDK to your instance of the Frequency Gateway Account Service (see below) |
 | `siwfSignedRequest`   | `string`                | ✅       | Encoded SIWF signed request string                                                     |
 | `userHandle`          | `string`                | ❄️       | (New Users Only) Handle to register                                                    |
 | `email`               | `string`                | ❄️       | (New Users Only) User's email for recovery setup                                       |
-| `msaCreationCallback` | `MsaCreationCallbackFn` | ❄️       | Callback for when the MSA Id is allocated (see below)                                  |
+| `msaCreationCallback` | `MsaCreationCallbackFn` | ❄️       | Callback for when the MSA Id is claimed (see below)                                    |
 
 ### Return Value
 ```ts

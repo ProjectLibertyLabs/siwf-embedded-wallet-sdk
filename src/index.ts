@@ -1,13 +1,31 @@
-import { AccountResponse, GatewaySiwfResponse } from "./gateway-types.js";
+import { AccountResponse, GatewaySiwfResponse } from "./types/response-types";
 import { decodeSignedRequest } from "@projectlibertylabs/siwf";
 import { getGatewayChainInfo } from "./helpers/gateway.js";
-import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types.js";
-import { GatewayFetchError } from "./error-types";
-import { processLogin } from "./processsLogin";
-import { processSignUp } from "./processSignUp";
+import {
+  Address,
+  GatewayFetchFn,
+  MsaCreationCallbackFn,
+  SignatureFn,
+} from "./types/param-types";
+import { GatewayFetchError } from "./types/error-types";
+import { processLogin } from "./helpers/processsLogin";
+import { processSignUp } from "./helpers/processSignUp";
 
+/**
+ * Executes signIn or signUp on Frequency Gateway based on whether the accountId is associated with an existing account or not.
+ *
+ * @param accountId - the public key of the user who wishes to sign in
+ * @param signatureFn - Callback - Connects your embedded wallet to the SDK
+ * @param gatewayFetchFn - Callback - Connects the SDK to your instance of the Frequency Gateway Account Service
+ * @param encodedSiwfSignedRequest - Encoded SIWF signed request string
+ * @param signUpHandle - (New Users Only) Handle to register
+ * @param signUpEmail (New Users Only) User's email for recovery setup
+ * @param msaCreationCallbackFn - Callback - Called when the MSA Id is claimed
+ * @returns 'GatewaySiwfResponse' on login or sign up
+ * @throws `GatewayFetchError` or `Error` when the request fails
+ */
 export async function startSiwf(
-  accountId: string,
+  accountId: Address,
   signatureFn: SignatureFn,
   gatewayFetchFn: GatewayFetchFn,
   encodedSiwfSignedRequest: string,

@@ -87,8 +87,10 @@ export function toChecksumAddress(
   let checksumAddress = "0x";
 
   for (let i = 0; i < strippedAddress.length; i++) {
+    const indexedKeccakHash = keccakHash[i];
+    if (!indexedKeccakHash) throw new Error("Unable to parse address.");
     checksumAddress +=
-      parseInt(keccakHash[i]!, 16) >= 8
+      parseInt(indexedKeccakHash, 16) >= 8
         ? strippedAddress[i]?.toUpperCase()
         : strippedAddress[i];
   }

@@ -1,13 +1,15 @@
-import { GatewayFetchFn, SignatureFn } from "./types";
-import { SiwfSignedRequest } from "@projectlibertylabs/siwf";
-import { ChainInfoResponse, GatewaySiwfResponse } from "./gateway-types";
+import { GatewayFetchFn, SignatureFn } from "../types/param-types";
+import {
+  ChainInfoResponse,
+  GatewaySiwfResponse,
+} from "../types/response-types";
 import {
   createLoginSiwfResponse,
   CreateLoginSiwfResponseArguments,
-} from "./helpers/siwf";
+} from "./siwf";
 import { v4 as generateRandomUuid } from "uuid";
-import { postGatewaySiwf } from "./helpers/gateway";
-import { convertSS58AddressToEthereum } from "./helpers/utils";
+import { postGatewaySiwf } from "./gateway";
+import { convertSS58AddressToEthereum } from "./utils";
 
 export async function processLogin(
   accountId: string,

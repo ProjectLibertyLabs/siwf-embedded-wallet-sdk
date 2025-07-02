@@ -1,4 +1,8 @@
-import { GatewayFetchFn, MsaCreationCallbackFn, SignatureFn } from "./types";
+import {
+  GatewayFetchFn,
+  MsaCreationCallbackFn,
+  SignatureFn,
+} from "../types/param-types";
 import {
   SiwfResponsePayload,
   SiwfResponsePayloadClaimHandle,
@@ -9,19 +13,19 @@ import {
   AccountResponse,
   ChainInfoResponse,
   GatewaySiwfResponse,
-} from "./gateway-types";
+} from "../types/response-types";
 import {
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
-} from "./helpers/payloads";
+} from "./payloads";
 import {
   convertSS58AddressToEthereum,
   requestContainsCredentialType,
-} from "./helpers/utils";
-import { createSignInSiwfResponse } from "./helpers/siwf";
-import { pollForAccount, postGatewaySiwf } from "./helpers/gateway";
-import { generateGraphKeyPair } from "./helpers/crypto";
+} from "./utils";
+import { createSignInSiwfResponse } from "./siwf";
+import { pollForAccount, postGatewaySiwf } from "./gateway";
+import { generateGraphKeyPair } from "./crypto";
 
 const PAYLOAD_EXPIRATION_DELTA = 90; // Matches frequency access config
 
