@@ -1,0 +1,196 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Basic startSiwf test > Can login 1`] = `
+{
+  "controlKey": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+  "msaId": "290",
+}
+`;
+
+exports[`Basic startSiwf test > Can sign up 1`] = `
+{
+  "controlKey": "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+  "email": "john.doe@example.com",
+  "graphKey": {
+    "encodedPrivateKeyValue": "0xd0910c853563723253c4ed105c08614fc8aaaf1b0871375520d72251496e8d87",
+    "encodedPublicKeyValue": "0xb5032900293f1c9e5822fd9c120b253cb4a4dfe94c214e688e01f32db9eedf17",
+    "encoding": "base16",
+    "format": "bare",
+    "id": "did:key:z6QNucQV4AF1XMQV4kngbmnBHwYa6mVswPEGrkFrUayhttT1",
+    "keyType": "dsnp.public-key-key-agreement",
+    "type": "X25519",
+  },
+  "phoneNumber": "555-867-5309",
+  "rawCredentials": [
+    {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://www.w3.org/ns/credentials/undefined-terms/v2",
+      ],
+      "credentialSchema": {
+        "id": "https://schemas.frequencyaccess.com/VerifiedEmailAddressCredential/bciqe4qoczhftici4dzfvfbel7fo4h4sr5grco3oovwyk6y4ynf44tsi.json",
+        "type": "JsonSchema",
+      },
+      "credentialSubject": {
+        "emailAddress": "john.doe@example.com",
+        "id": "did:key:z6QNucQV4AF1XMQV4kngbmnBHwYa6mVswPEGrkFrUayhttT1",
+        "lastVerified": "2024-08-21T21:27:59.309+0000",
+      },
+      "issuer": "did:web:frequencyaccess.com",
+      "proof": {
+        "cryptosuite": "eddsa-rdfc-2022",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "z4jArnPwuwYxLnbBirLanpkcyBpmQwmyn5f3PdTYnxhpy48qpgvHHav6warjizjvtLMg6j3FK3BqbR2nuyT2UTSWC",
+        "type": "DataIntegrityProof",
+        "verificationMethod": "did:web:frequencyaccess.com#z6MkofWExWkUvTZeXb9TmLta5mBT6Qtj58es5Fqg1L5BCWQD",
+      },
+      "type": [
+        "VerifiedEmailAddressCredential",
+        "VerifiableCredential",
+      ],
+      "validFrom": "2024-08-21T21:28:08.289+0000",
+    },
+    {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://www.w3.org/ns/credentials/undefined-terms/v2",
+      ],
+      "credentialSchema": {
+        "id": "https://schemas.frequencyaccess.com/VerifiedGraphKeyCredential/bciqmdvmxd54zve5kifycgsdtoahs5ecf4hal2ts3eexkgocyc5oca2y.json",
+        "type": "JsonSchema",
+      },
+      "credentialSubject": {
+        "encodedPrivateKeyValue": "0xd0910c853563723253c4ed105c08614fc8aaaf1b0871375520d72251496e8d87",
+        "encodedPublicKeyValue": "0xb5032900293f1c9e5822fd9c120b253cb4a4dfe94c214e688e01f32db9eedf17",
+        "encoding": "base16",
+        "format": "bare",
+        "id": "did:key:z6QNucQV4AF1XMQV4kngbmnBHwYa6mVswPEGrkFrUayhttT1",
+        "keyType": "dsnp.public-key-key-agreement",
+        "type": "X25519",
+      },
+      "issuer": "did:key:z6QNucQV4AF1XMQV4kngbmnBHwYa6mVswPEGrkFrUayhttT1",
+      "type": [
+        "VerifiedGraphKeyCredential",
+        "VerifiableCredential",
+      ],
+      "validFrom": "2024-08-21T21:28:08.289+0000",
+    },
+  ],
+  "signUpReferenceId": "MjY3MjI3NWZlMGM0NTZmYjY3MWU0ZjQxN2ZiMmY5ODkyYzc1NzNiYQo",
+  "signUpStatus": "waiting",
+}
+`;
+
+exports[`Basic startSiwf test > Can sign up without a graph key 1`] = `
+[
+  {
+    "method": "eth_signTypedData_v4",
+    "params": [
+      "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+      {
+        "domain": {
+          "chainId": "0x082B",
+          "name": "Frequency",
+          "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+          "version": "1",
+        },
+        "message": {
+          "authorizedMsaId": "1",
+          "expiration": 122,
+          "schemaIds": [
+            5,
+            7,
+            8,
+            9,
+            10,
+          ],
+        },
+        "primaryType": "AddProvider",
+        "types": {
+          "AddProvider": [
+            {
+              "name": "authorizedMsaId",
+              "type": "uint64",
+            },
+            {
+              "name": "schemaIds",
+              "type": "uint16[]",
+            },
+            {
+              "name": "expiration",
+              "type": "uint32",
+            },
+          ],
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string",
+            },
+            {
+              "name": "version",
+              "type": "string",
+            },
+            {
+              "name": "chainId",
+              "type": "uint256",
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    "method": "eth_signTypedData_v4",
+    "params": [
+      "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+      {
+        "domain": {
+          "chainId": "0x082B",
+          "name": "Frequency",
+          "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+          "version": "1",
+        },
+        "message": {
+          "expiration": 122,
+          "handle": "JohnDoe",
+        },
+        "primaryType": "ClaimHandlePayload",
+        "types": {
+          "ClaimHandlePayload": [
+            {
+              "name": "handle",
+              "type": "string",
+            },
+            {
+              "name": "expiration",
+              "type": "uint32",
+            },
+          ],
+          "EIP712Domain": [
+            {
+              "name": "name",
+              "type": "string",
+            },
+            {
+              "name": "version",
+              "type": "string",
+            },
+            {
+              "name": "chainId",
+              "type": "uint256",
+            },
+            {
+              "name": "verifyingContract",
+              "type": "address",
+            },
+          ],
+        },
+      },
+    ],
+  },
+]
+`;
