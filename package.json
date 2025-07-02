@@ -46,11 +46,15 @@
     "@rollup/rollup-linux-x64-gnu": "^4.44.0"
   },
   "dependencies": {
-    "@frequency-chain/ethereum-utils": "1.17.0-rc6",
-    "@polkadot/util": "^13.5.2",
+    "@frequency-chain/ethereum-utils": "1.17.0-rc7",
+    "@polkadot/util": "13.5.2",
     "@projectlibertylabs/siwf": "2.2.1",
     "ethereum-checksum-address": "0.0.8",
     "tweetnacl": "^1.0.3",
     "uuid": "^11.1.0"
+  },
+  "overrides": {
+    "@polkadot/api": "16.2.2",
+    "@polkadot/types": "16.2.2"
   }
 }
