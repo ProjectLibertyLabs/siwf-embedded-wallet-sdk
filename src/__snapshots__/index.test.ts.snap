@@ -89,7 +89,7 @@ exports[`Basic startSiwf test > Can sign up without a graph key 1`] = `
       "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
       {
         "domain": {
-          "chainId": "0x190f1b44",
+          "chainId": "0x082B",
           "name": "Frequency",
           "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
           "version": "1",
@@ -149,7 +149,7 @@ exports[`Basic startSiwf test > Can sign up without a graph key 1`] = `
       "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
       {
         "domain": {
-          "chainId": "0x190f1b44",
+          "chainId": "0x082B",
           "name": "Frequency",
           "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
           "version": "1",
