@@ -3,12 +3,16 @@
 ![NPM Version](https://img.shields.io/npm/v/%40projectlibertylabs%2Fsiwf-embedded-wallet-sdk)
 ## Overview
 
-This SDK handles:
+`startSiwf(...)`:
 
 * Signing and submitting SIWF payloads (e.g., add provider, claim handle, add graph key)
 * Creating or logging into decentralized identities (MSAs) on Frequency
 * Calling back to your app after MSA creation via a custom callback
 * Integrating with existing wallet signature flows
+
+`getAccountForAccountId(...)`:
+
+* Fetches a user's account information (if present) from Gateway Services
 
 It’s ideal for Web3 applications that want to support **embedded wallet** experiences where the wallet is controlled programmatically.
 
@@ -28,7 +32,7 @@ npm install @projectlibertylabs/siwf-embedded-wallet-sdk
 import { startSiwf } from "@projectlibertylabs/siwf-embedded-wallet-sdk";
 
 const startSiwfResponse = await startSiwf(
-  userAddress,
+  accountId,
   signatureFn,
   gatewayFetchFn,
   siwfSignedRequest,
@@ -44,7 +48,7 @@ const startSiwfResponse = await startSiwf(
 
 | Parameter             | Type                    | Required | Description                                                                            |
 | --------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------- |
-| `userAddress`         | `string`                | ✅        | The wallet address of the user                                                         |
+| `accountId`         | `string`                | ✅        | The wallet address of the user                                                         |
 | `signatureFn`         | `SignatureFn`           | ✅        | Connects your embedded wallet to the SDK (see below)                                   |
 | `gatewayFetchFn`      | `GatewayFetchFn`        | ✅        | Connects the SDK to your instance of the Frequency Gateway Account Service (see below) |
 | `siwfSignedRequest`   | `string`                | ✅        | Encoded SIWF signed request string                                                     |
@@ -52,6 +56,35 @@ const startSiwfResponse = await startSiwf(
 | `email`               | `string`                | ❄️       | (New Users Only) User's email for recovery setup                                       |
 | `msaCreationCallback` | `MsaCreationCallbackFn` | ❄️       | Callback for when the MSA ID is allocated                                              |
 
+### Return Value
+```ts
+export interface GatewaySiwfResponse {
+   controlKey: string;
+   signUpReferenceId?: string;
+   signUpStatus?: string;
+   msaId?: string;
+   email?: string;
+   phoneNumber?: string;
+   graphKey?: GraphKeySubject;
+   rawCredentials?: object[];
+}
+```
+---
+
+## `getAccountForAccountId` Parameters
+
+| Parameter             | Type                    | Required | Description                                                                            |
+| --------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------- |
+| `gatewayFetchFn`      | `GatewayFetchFn`        | ✅        | Connects the SDK to your instance of the Frequency Gateway Account Service (see below) |
+| `accountId`         | `string`                | ✅        | The wallet address of the user                                                         |
+
+### Return Value
+```ts
+interface AccountResponse {
+   msaId: string;
+   handle?: HandleResponse;
+}
+```
 ---
 
 ## Function Details
@@ -93,7 +126,7 @@ type GatewayFetchFn = (
 
 ---
 
-### MSA Callback Function
+### MSA Creation Callback Function
 
 When a new user signs up, the allocation of the MSA Id on-chain can take some time. This callback will be called once the allocation is completed, or if the user already has an account, it will return the value without waiting.
 
@@ -112,7 +145,7 @@ type MsaCreationCallbackFn = (account: AccountResponse) => void;
 
 ---
 
-## How It Works
+## How startSiwf() Works
 
 1. Checks if the user has an existing MSA.
 2. If not:

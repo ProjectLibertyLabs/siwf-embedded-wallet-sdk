@@ -191,8 +191,8 @@ export async function startSiwf(
     decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue;
 
   const [userAccount, providerAccount, chainInfo] = await Promise.all([
-    getGatewayAccount(gatewayFetchFn, accountId),
-    getGatewayAccount(gatewayFetchFn, providerAddress),
+    getAccountForAccountId(gatewayFetchFn, accountId),
+    getAccountForAccountId(gatewayFetchFn, providerAddress),
     getGatewayChainInfo(gatewayFetchFn),
   ]);
 
