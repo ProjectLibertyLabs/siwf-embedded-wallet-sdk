@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   convertSS58AddressToEthereum,
   requestContainsCredentialType,
-  userAddressToPublicKey,
+  accountIdToPublicKey,
 } from "./utils";
 import { SiwfSignedRequest } from "@projectlibertylabs/siwf";
 
@@ -18,14 +18,14 @@ describe("convertSS58AddressToEthereum", () => {
   });
 });
 
-describe("userAddressToPublicKey", () => {
+describe("accountIdToPublicKey", () => {
   it("succeeds", async () => {
-    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+    const accountId = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
 
-    const result = userAddressToPublicKey(userAddress);
+    const result = accountIdToPublicKey(accountId);
 
     expect(result).toStrictEqual({
-      encodedValue: userAddress,
+      encodedValue: accountId,
       encoding: "base16",
       format: "eip-55",
       type: "Secp256k1",

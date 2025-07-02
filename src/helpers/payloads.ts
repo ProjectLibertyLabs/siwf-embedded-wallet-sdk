@@ -13,7 +13,7 @@ import {
 import { encodedValueToSignature, isHexString } from "./utils";
 
 export async function createSignedAddProviderPayload(
-  userAddress: string,
+  accountId: string,
   signatureFn: SignatureFn,
   payloadArguments: SiwfResponsePayloadAddProvider["payload"],
   extrinsic:
@@ -27,7 +27,7 @@ export async function createSignedAddProviderPayload(
   ) as EIP712Document;
   const encodedValue = await signatureFn({
     method: "eth_signTypedData_v4",
-    params: [userAddress, addProviderEip712],
+    params: [accountId, addProviderEip712],
   });
 
   const signature = encodedValueToSignature(encodedValue);
@@ -44,7 +44,7 @@ export async function createSignedAddProviderPayload(
 }
 
 export async function createSignedClaimHandlePayload(
-  userAddress: string,
+  accountId: string,
   signatureFn: SignatureFn,
   payloadArguments: SiwfResponsePayloadClaimHandle["payload"],
 ): Promise<SiwfResponsePayloadClaimHandle> {
@@ -54,7 +54,7 @@ export async function createSignedClaimHandlePayload(
   ) as EIP712Document;
   const encodedValue = await signatureFn({
     method: "eth_signTypedData_v4",
-    params: [userAddress, claimHandleEip712],
+    params: [accountId, claimHandleEip712],
   });
 
   const signature = encodedValueToSignature(encodedValue);
@@ -71,7 +71,7 @@ export async function createSignedClaimHandlePayload(
 }
 
 export async function createSignedGraphKeyPayload(
-  userAddress: string,
+  accountId: string,
   signatureFn: SignatureFn,
   payloadArguments: SiwfResponsePayloadItemActions["payload"],
 ): Promise<SiwfResponsePayloadItemActions> {
@@ -96,7 +96,7 @@ export async function createSignedGraphKeyPayload(
 
   const encodedValue = await signatureFn({
     method: "eth_signTypedData_v4",
-    params: [userAddress, addItemsEip712],
+    params: [accountId, addItemsEip712],
   });
 
   const signature = encodedValueToSignature(encodedValue);

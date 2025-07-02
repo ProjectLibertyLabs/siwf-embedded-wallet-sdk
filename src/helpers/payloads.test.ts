@@ -17,11 +17,11 @@ import {
 
 describe("createSignedAddProviderPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+    const accountId = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const signatureFn = TEST_SIGNATURE_FN;
 
     const payload: SiwfResponsePayloadAddProvider =
-      await createSignedAddProviderPayload(userAddress, signatureFn, {
+      await createSignedAddProviderPayload(accountId, signatureFn, {
         authorizedMsaId: 1,
         schemaIds: [8, 9, 10, 15],
         expiration: 100,
@@ -33,12 +33,12 @@ describe("createSignedAddProviderPayload", () => {
 
 describe("createSignedClaimHandlePayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+    const accountId = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const baseHandle = "Alice";
     const signatureFn = TEST_SIGNATURE_FN;
 
     const payload: SiwfResponsePayloadClaimHandle =
-      await createSignedClaimHandlePayload(userAddress, signatureFn, {
+      await createSignedClaimHandlePayload(accountId, signatureFn, {
         baseHandle,
         expiration: 100,
       });
@@ -49,25 +49,21 @@ describe("createSignedClaimHandlePayload", () => {
 
 describe("createSignedGraphKeyPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+    const accountId = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const signatureFn = TEST_SIGNATURE_FN;
 
-    const payload = await createSignedGraphKeyPayload(
-      userAddress,
-      signatureFn,
-      {
-        schemaId: 7,
-        targetHash: 0,
-        expiration: 100,
-        actions: [
-          {
-            type: "addItem",
-            payloadHex:
-              "0x40a6836ea489047852d3f0297f8fe8ad6779793af4e9c6274c230c207b9b825026",
-          },
-        ],
-      },
-    );
+    const payload = await createSignedGraphKeyPayload(accountId, signatureFn, {
+      schemaId: 7,
+      targetHash: 0,
+      expiration: 100,
+      actions: [
+        {
+          type: "addItem",
+          payloadHex:
+            "0x40a6836ea489047852d3f0297f8fe8ad6779793af4e9c6274c230c207b9b825026",
+        },
+      ],
+    });
 
     expect(payload).toMatchSnapshot();
   });
@@ -75,7 +71,7 @@ describe("createSignedGraphKeyPayload", () => {
 
 describe("createSignedLogInPayload", () => {
   it("returns the correct payload", async () => {
-    const userAddress = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
+    const accountId = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const signatureFn = TEST_SIGNATURE_FN;
     const mockLoginPayloadArguments: CreateLoginSiwfResponseArguments = {
       domain: "your-app.com",
@@ -87,7 +83,7 @@ describe("createSignedLogInPayload", () => {
     };
 
     const payload: SiwfResponse = await createLoginSiwfResponse(
-      userAddress,
+      accountId,
       signatureFn,
       mockLoginPayloadArguments,
     );

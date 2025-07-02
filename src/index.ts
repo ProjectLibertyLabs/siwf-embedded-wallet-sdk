@@ -16,7 +16,6 @@ import {
   createSignedGraphKeyPayload,
 } from "./helpers/payloads.js";
 import {
-  getGatewayAccount,
   getGatewayChainInfo,
   pollForAccount,
   postGatewaySiwf,
@@ -33,11 +32,12 @@ import {
   CreateLoginSiwfResponseArguments,
   createSignInSiwfResponse,
 } from "./helpers/siwf";
+import { GatewayFetchError } from "./error-types";
 
 const PAYLOAD_EXPIRATION_DELTA = 90; // Matches frequency access config
 
 async function generateAndSignGraphKeyPayload(
-  userAddress: string,
+  accountId: string,
   expiration: number,
   signatureFn: SignatureFn,
 ): Promise<SiwfResponsePayloadItemActions> {
@@ -57,14 +57,14 @@ async function generateAndSignGraphKeyPayload(
   };
 
   return await createSignedGraphKeyPayload(
-    userAddress,
+    accountId,
     signatureFn,
     addGraphKeyArguments,
   );
 }
 
 async function processSignUp(
-  userAddress: string,
+  accountId: string,
   signatureFn: SignatureFn,
   gatewayFetchFn: GatewayFetchFn,
   decodedSiwfSignedRequest: SiwfSignedRequest,
@@ -86,7 +86,7 @@ async function processSignUp(
     expiration,
   };
   const addProviderPayload = await createSignedAddProviderPayload(
-    userAddress,
+    accountId,
     signatureFn,
     addProviderArguments,
   );
@@ -97,7 +97,7 @@ async function processSignUp(
     expiration,
   };
   const claimHandlePayload = await createSignedClaimHandlePayload(
-    userAddress,
+    accountId,
     signatureFn,
     claimHandleArguments,
   );
@@ -111,18 +111,14 @@ async function processSignUp(
 
   if (graphKeyRequested) {
     optionalPayloads.push(
-      await generateAndSignGraphKeyPayload(
-        userAddress,
-        expiration,
-        signatureFn,
-      ),
+      await generateAndSignGraphKeyPayload(accountId, expiration, signatureFn),
     );
   }
 
   // Sign Recovery Key
   // const _ignoreForMockSetRecoveryHashSignature = await signatureFn({
   //   method: "eth_signTypedData_v4",
-  //   params: [userAddress, addRecoveryHash712],
+  //   params: [accountId, addRecoveryHash712],
   // });
 
   const payloads: SiwfResponsePayload[] = optionalPayloads.concat([
@@ -130,7 +126,7 @@ async function processSignUp(
     claimHandlePayload,
   ]);
 
-  const siwfResponse = await createSignInSiwfResponse(userAddress, payloads);
+  const siwfResponse = await createSignInSiwfResponse(accountId, payloads);
 
   // Submit to Gateway
   const gatewaySiwfResponse = await postGatewaySiwf(
@@ -141,14 +137,14 @@ async function processSignUp(
   // Kick off the msaCallback
   // Don't wait the pollForAccount. Let it complete after the return.
   if (msaCreationCallbackFn) {
-    pollForAccount(gatewayFetchFn, userAddress, msaCreationCallbackFn);
+    pollForAccount(gatewayFetchFn, accountId, msaCreationCallbackFn);
   }
 
   return convertSS58AddressToEthereum(gatewaySiwfResponse);
 }
 
 async function processLogin(
-  userAddress: string,
+  accountId: string,
   signatureFn: SignatureFn,
   gatewayFetchFn: GatewayFetchFn,
   decodedSiwfSignedRequest: SiwfSignedRequest,
@@ -166,7 +162,7 @@ async function processLogin(
     issuedAt: JSON.stringify(new Date()),
   };
   const signedLoginSiwfResponse = await createLoginSiwfResponse(
-    userAddress,
+    accountId,
     signatureFn,
     loginPayloadArguments,
   );
@@ -180,7 +176,7 @@ async function processLogin(
 }
 
 export async function startSiwf(
-  userAddress: string,
+  accountId: string,
   signatureFn: SignatureFn,
   gatewayFetchFn: GatewayFetchFn,
   encodedSiwfSignedRequest: string,
@@ -195,8 +191,8 @@ export async function startSiwf(
     decodedSiwfSignedRequest.requestedSignatures.publicKey.encodedValue;
 
   const [userAccount, providerAccount, chainInfo] = await Promise.all([
-    getGatewayAccount(gatewayFetchFn, userAddress),
-    getGatewayAccount(gatewayFetchFn, providerAddress),
+    getAccountForAccountId(gatewayFetchFn, accountId),
+    getAccountForAccountId(gatewayFetchFn, providerAddress),
     getGatewayChainInfo(gatewayFetchFn),
   ]);
 
@@ -212,7 +208,7 @@ export async function startSiwf(
       throw new Error("signUpHandle missing for non-existent account.");
 
     return await processSignUp(
-      userAddress,
+      accountId,
       signatureFn,
       gatewayFetchFn,
       decodedSiwfSignedRequest,
@@ -223,11 +219,42 @@ export async function startSiwf(
     );
   } else {
     return await processLogin(
-      userAddress,
+      accountId,
       signatureFn,
       gatewayFetchFn,
       decodedSiwfSignedRequest,
       chainInfo,
     );
+  }
+}
+
+/**
+ * Fetches a user's account information (if present) from Gateway Services
+ *
+ * @param gatewayFetchFn Callback for performing request to gateway services
+ * @param accountId - the public key of the user who wishes to sign in
+ * @returns An 'account response' when the user's account exists, and `null` otherwise
+ * @throws `GatewayFetchError` when the request fails
+ */
+export async function getAccountForAccountId(
+  gatewayFetchFn: GatewayFetchFn,
+  accountId: string,
+): Promise<AccountResponse | null> {
+  const response = await gatewayFetchFn(
+    "GET",
+    `/v1/accounts/account/${accountId}`,
+  );
+  if (response.ok) {
+    return (await response.json()) as AccountResponse;
+  } else {
+    switch (response.status) {
+      case 404:
+        return null; // The user does not (yet) exist on chain
+      default:
+        throw new GatewayFetchError(
+          "Failed GatewayFetchFn for GET Account",
+          response,
+        );
+    }
   }
 }

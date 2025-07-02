@@ -29,9 +29,9 @@ export function convertSS58AddressToEthereum<T extends { controlKey: string }>(
   };
 }
 
-export function userAddressToPublicKey(userAddress: string): SiwfPublicKey {
+export function accountIdToPublicKey(accountId: string): SiwfPublicKey {
   return {
-    encodedValue: toChecksumAddress(userAddress),
+    encodedValue: toChecksumAddress(accountId),
     encoding: "base16",
     format: "eip-55",
     type: "Secp256k1",
