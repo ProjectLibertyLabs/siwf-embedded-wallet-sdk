@@ -1,9 +1,9 @@
-import { GatewayFetchFn } from "../src/types";
+import { GatewayFetchFn } from "../src/types/param-types";
 import {
   AccountResponse,
   ChainInfoResponse,
   GatewaySiwfResponse,
-} from "../src/gateway-types";
+} from "../src/types/response-types";
 
 export const mockGatewayFetchFactory = (
   hasAccountResponse: AccountResponse | null,

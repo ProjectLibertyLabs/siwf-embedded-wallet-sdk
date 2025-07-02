@@ -5,7 +5,7 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.{js,ts}"],
     coverage: {
       exclude: [
-        "src/**/*types.ts",
+        "src/types",
         "src/base64url.ts",
         "./*.*s",
         "test-mocks",

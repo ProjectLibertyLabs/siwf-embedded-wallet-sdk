@@ -1,4 +1,4 @@
-import { GatewaySiwfResponse } from "src/gateway-types";
+import { GatewaySiwfResponse } from "../src/types/response-types";
 
 export function mockGatewayNewUserResponse(): GatewaySiwfResponse {
   return {

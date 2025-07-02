@@ -1,7 +1,10 @@
-import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
-import { ChainInfoResponse, GatewaySiwfResponse } from "../gateway-types.js";
-import { GatewayFetchError } from "../error-types.js";
-import { stringToBase64URL } from "src/base64url";
+import { GatewayFetchFn, MsaCreationCallbackFn } from "../types/param-types";
+import {
+  ChainInfoResponse,
+  GatewaySiwfResponse,
+} from "../types/response-types";
+import { GatewayFetchError } from "../types/error-types";
+import { stringToBase64URL } from "src/helpers/base64url";
 import { getAccountForAccountId } from "../index";
 import { SiwfResponse } from "@projectlibertylabs/siwf";
 

@@ -54,7 +54,7 @@ const startSiwfResponse = await startSiwf(
 | `siwfSignedRequest`   | `string`                | ✅       | Encoded SIWF signed request string                                                     |
 | `userHandle`          | `string`                | ❄️       | (New Users Only) Handle to register                                                    |
 | `email`               | `string`                | ❄️       | (New Users Only) User's email for recovery setup                                       |
-| `msaCreationCallback` | `MsaCreationCallbackFn` | ❄️       | Callback for when the MSA Id is allocated (see below)                                  |
+| `msaCreationCallback` | `MsaCreationCallbackFn` | ❄️       | Callback for when the MSA Id is claimed (see below)                                    |
 
 ### Return Value
 ```ts

@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
+import { GatewayFetchFn, MsaCreationCallbackFn } from "../types/param-types";
 import {
   AccountResponse,
   ChainInfoResponse,
   GatewaySiwfResponse,
-} from "../gateway-types";
-import { GatewayFetchError } from "../error-types";
+} from "../types/response-types";
+import { GatewayFetchError } from "../types/error-types";
 import {
   getGatewayChainInfo,
   poll,
