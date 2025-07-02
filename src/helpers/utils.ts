@@ -2,6 +2,8 @@ import { HexString } from "@frequency-chain/ethereum-utils";
 import { u8aToHex } from "@polkadot/util";
 import { addressToEvm } from "@polkadot/util-crypto";
 import { SiwfSignedRequest, SiwfPublicKey } from "@projectlibertylabs/siwf";
+import { keccak_256 } from "@noble/hashes/sha3";
+
 /**
  * Validate that a string is a valid hex string
  */
@@ -61,33 +63,34 @@ export function requestContainsCredentialType(
   });
 }
 
+function stripAddress(address: string) {
+  return (
+    address.slice(0, 2) === "0x" ? address.slice(2) : address
+  ).toLowerCase();
+}
+
 export function toChecksumAddress(
   address: string,
   chainId: string | null = null,
 ) {
-  const keccak = require("keccak");
-
   if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
     throw new Error(
       `Given address "${address}" is not a valid Ethereum address.`,
     );
   }
-
-  const stripAddress = (
-    address.slice(0, 2) === "0x" ? address.slice(2) : address
-  ).toLowerCase();
+  const strippedAddress = stripAddress(address);
 
   const prefix = chainId != null ? chainId.toString() + "0x" : "";
-  const keccakHash = keccak("keccak256")
-    .update(prefix + stripAddress)
-    .digest("hex");
+  const keccakHash = stripAddress(
+    u8aToHex(keccak_256(prefix + strippedAddress)),
+  );
   let checksumAddress = "0x";
 
-  for (let i = 0; i < stripAddress.length; i++) {
+  for (let i = 0; i < strippedAddress.length; i++) {
     checksumAddress +=
-      parseInt(keccakHash[i], 16) >= 8
-        ? stripAddress[i]?.toUpperCase()
-        : stripAddress[i];
+      parseInt(keccakHash[i]!, 16) >= 8
+        ? strippedAddress[i]?.toUpperCase()
+        : strippedAddress[i];
   }
 
   return checksumAddress;
