@@ -3,8 +3,11 @@ import {
   convertSS58AddressToEthereum,
   requestContainsCredentialType,
   accountIdToPublicKey,
+  toChecksumAddress,
 } from "./utils";
 import { SiwfSignedRequest } from "@projectlibertylabs/siwf";
+import { mockAccountId } from "../../test-mocks/consts";
+import { u8aToHex } from "@polkadot/util";
 
 describe("convertSS58AddressToEthereum", () => {
   it("succeeds", async () => {
@@ -146,5 +149,20 @@ describe("requestContainsCredentialType", () => {
     const result = requestContainsCredentialType(request, "");
 
     expect(result).toBe(false);
+  });
+});
+
+describe("toChecksumAddress", () => {
+  it("If already formatted correctly, should return the same string back", () => {
+    const result = toChecksumAddress(mockAccountId);
+    expect(result).toStrictEqual(mockAccountId);
+  });
+  it("If formatted incorrectly, should convert to checksum", () => {
+    const mockAccountIdAsUInt8Array = Uint8Array.from([
+      0xf2, 0x4f, 0xf3, 0xa9, 0xcf, 0x04, 0xc7, 0x1d, 0xbc, 0x94, 0xd0, 0xb5,
+      0x66, 0xf7, 0xa2, 0x7b, 0x94, 0x56, 0x6c, 0xac,
+    ]);
+    const result = toChecksumAddress(u8aToHex(mockAccountIdAsUInt8Array));
+    expect(result).toStrictEqual(mockAccountId);
   });
 });
