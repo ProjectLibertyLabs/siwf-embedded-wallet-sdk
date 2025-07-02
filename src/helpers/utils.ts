@@ -2,7 +2,7 @@ import { HexString } from "@frequency-chain/ethereum-utils";
 import { u8aToHex } from "@polkadot/util";
 import { addressToEvm } from "@polkadot/util-crypto";
 import { SiwfSignedRequest, SiwfPublicKey } from "@projectlibertylabs/siwf";
-import { toChecksumAddress } from "ethereum-checksum-address";
+import { keccak_256 } from "@noble/hashes/sha3";
 
 /**
  * Validate that a string is a valid hex string
@@ -61,4 +61,37 @@ export function requestContainsCredentialType(
       return credRequest.type === targetType;
     }
   });
+}
+
+function stripAddress(address: string) {
+  return (
+    address.slice(0, 2) === "0x" ? address.slice(2) : address
+  ).toLowerCase();
+}
+
+export function toChecksumAddress(
+  address: string,
+  chainId: string | null = null,
+) {
+  if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+    throw new Error(
+      `Given address "${address}" is not a valid Ethereum address.`,
+    );
+  }
+  const strippedAddress = stripAddress(address);
+
+  const prefix = chainId != null ? chainId.toString() + "0x" : "";
+  const keccakHash = stripAddress(
+    u8aToHex(keccak_256(prefix + strippedAddress)),
+  );
+  let checksumAddress = "0x";
+
+  for (let i = 0; i < strippedAddress.length; i++) {
+    checksumAddress +=
+      parseInt(keccakHash[i]!, 16) >= 8
+        ? strippedAddress[i]?.toUpperCase()
+        : strippedAddress[i];
+  }
+
+  return checksumAddress;
 }
