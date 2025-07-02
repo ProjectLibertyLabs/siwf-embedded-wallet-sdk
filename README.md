@@ -47,7 +47,7 @@ const startSiwfResponse = await startSiwf(
 ## `startSiwf` Parameters
 
 | Parameter             | Type                    | Required | Description                                                                            |
-| --------------------- | ----------------------- | -------- |----------------------------------------------------------------------------------------|
+| --------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------- |
 | `accountId`           | `string`                | ✅       | The wallet address of the user                                                         |
 | `signatureFn`         | `SignatureFn`           | ✅       | Connects your embedded wallet to the SDK (see below)                                   |
 | `gatewayFetchFn`      | `GatewayFetchFn`        | ✅       | Connects the SDK to your instance of the Frequency Gateway Account Service (see below) |
