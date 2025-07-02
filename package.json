@@ -48,6 +48,7 @@
     "@frequency-chain/ethereum-utils": "1.17.0-rc7",
     "@polkadot/util": "13.5.2",
     "@projectlibertylabs/siwf": "2.2.1",
+    "keccak": "^3.0.4",
     "tweetnacl": "^1.0.3",
     "uuid": "^11.1.0"
   },
