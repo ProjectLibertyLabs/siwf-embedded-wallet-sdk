@@ -2,8 +2,8 @@ import { GatewayFetchFn, MsaCreationCallbackFn } from "../types";
 import { ChainInfoResponse, GatewaySiwfResponse } from "../gateway-types.js";
 import { GatewayFetchError } from "../error-types.js";
 import { stringToBase64URL } from "src/base64url";
-import { SiwfResponse } from "src/siwf-types";
 import { getAccountForAccountId } from "../index";
+import { SiwfResponse } from "@projectlibertylabs/siwf";
 
 /**
  * Fetches the chain info (with current block number) via Gateway

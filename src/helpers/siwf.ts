@@ -18,13 +18,13 @@ export async function createLoginSiwfResponse(
   payloadArguments: CreateLoginSiwfResponseArguments,
 ): Promise<SiwfResponse> {
   const loginCaip122 = `${payloadArguments.domain} wants you to sign in with your Frequency account:
-    frequency:${payloadArguments.chainId}:${accountId}
-    
-    URI: ${payloadArguments.uri}
-    Version: ${payloadArguments.version}
-    Nonce: ${payloadArguments.nonce}
-    Chain ID: frequency:${payloadArguments.chainId}
-    Issued At: ${payloadArguments.issuedAt}`;
+frequency:${payloadArguments.chainId}:${accountId}
+
+URI: ${payloadArguments.uri}
+Version: ${payloadArguments.version}
+Nonce: ${payloadArguments.nonce}
+Chain ID: frequency:${payloadArguments.chainId}
+Issued At: ${payloadArguments.issuedAt}`;
 
   const encodedValue = await signatureFn({
     method: "personal_sign",

@@ -126,7 +126,7 @@ describe("Basic startSiwf test", () => {
   it("Can sign up without a graph key", async () => {
     const payloadsToSign: any[] = []; // TODO: Use correct type when CAIP122 is exported
     const resp = await startSiwf(
-      mockUserAddress,
+      mockAccountId,
       async (payload) => {
         payloadsToSign.push(payload);
         return "0xdef0";
@@ -143,7 +143,7 @@ describe("Basic startSiwf test", () => {
       "john.doe@example.com",
     );
 
-    expect(resp.controlKey).toEqual(mockUserAddress);
+    expect(resp.controlKey).toEqual(mockAccountId);
     expect(resp.msaId).toEqual(mockNewUserGatewaySiwfResponse.msaId);
     expect(payloadsToSign).toMatchSnapshot();
   });
