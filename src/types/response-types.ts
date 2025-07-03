@@ -1,3 +1,6 @@
+import { SiwfResponseCredentialGraph } from "@projectlibertylabs/siwf";
+import { SiwfResponseCredentialRecoverySecret } from "@projectlibertylabs/siwf/types/credential";
+
 export interface HandleResponse {
   base_handle: string;
   canonical_base: string;
@@ -14,29 +17,6 @@ export interface ChainInfoResponse {
   finalized_blocknumber: number;
   genesis: string;
   runtime_version: number;
-}
-
-interface GraphKeySubject {
-  // The id type of the VerifiedGraphKeyCredential.
-  id: string;
-
-  // The encoded public key.
-  encodedPublicKeyValue: string;
-
-  // The encoded private key. WARNING: This is sensitive user information!
-  encodedPrivateKeyValue: string;
-
-  // How the encoded keys are encoded. Only "base16" (aka hex) currently.
-  encoding: string;
-
-  // Any addition formatting options. Only: "bare" currently.
-  format: string;
-
-  // The encryption key algorithm.
-  type: string;
-
-  // The DSNP key type.
-  keyType: string;
 }
 
 export interface GatewaySiwfResponse {
@@ -59,7 +39,10 @@ export interface GatewaySiwfResponse {
   phoneNumber?: string;
 
   // The user's Private Graph encryption key.
-  graphKey?: GraphKeySubject;
+  graphKey?: SiwfResponseCredentialGraph["credentialSubject"];
+
+  // The user's Recovery Secret encryption key.
+  recoverySecret?: SiwfResponseCredentialRecoverySecret["credentialSubject"]["recoverySecret"];
 
   // Raw parsed credentials received.
   rawCredentials?: object[];

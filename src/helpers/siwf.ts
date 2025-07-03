@@ -1,4 +1,4 @@
-import { SignatureFn } from "../types/param-types";
+import { Address, SignatureFn } from "../types/param-types";
 import { SiwfResponsePayload, SiwfResponse } from "@projectlibertylabs/siwf";
 import { encodedValueToSignature, accountIdToPublicKey } from "./utils";
 
@@ -13,7 +13,7 @@ export interface CreateLoginSiwfResponseArguments
 }
 
 export async function createLoginSiwfResponse(
-  accountId: string,
+  accountId: Address,
   signatureFn: SignatureFn,
   payloadArguments: CreateLoginSiwfResponseArguments,
 ): Promise<SiwfResponse> {
@@ -51,7 +51,7 @@ Issued At: ${payloadArguments.issuedAt}`;
 }
 
 export async function createSignInSiwfResponse(
-  accountId: string,
+  accountId: Address,
   payloads: SiwfResponsePayload[],
 ): Promise<SiwfResponse> {
   const userPublicKey = accountIdToPublicKey(accountId);

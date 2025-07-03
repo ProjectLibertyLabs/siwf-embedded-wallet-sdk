@@ -8,11 +8,12 @@ import {
   SignatureFn,
 } from "./types/param-types";
 import { GatewayFetchError } from "./types/error-types";
-import { processLogin } from "./helpers/processsLogin";
-import { processSignUp } from "./helpers/processSignUp";
+import { processLogin } from "./login/processLogin";
+import { processSignUp } from "./signUp/processSignUp";
+import { isHexString } from "./helpers/utils";
 
 /**
- * Executes signIn or signUp on Frequency Gateway based on whether the accountId is associated with an existing account or not.
+ * Executes login or signUp on Frequency Gateway based on whether the accountId is associated with an existing account or not.
  *
  * @param accountId - the public key of the user who wishes to sign in
  * @param signatureFn - Callback - Connects your embedded wallet to the SDK
@@ -25,7 +26,7 @@ import { processSignUp } from "./helpers/processSignUp";
  * @throws `GatewayFetchError` or `Error` when the request fails
  */
 export async function startSiwf(
-  accountId: Address,
+  accountId: Address | string,
   signatureFn: SignatureFn,
   gatewayFetchFn: GatewayFetchFn,
   encodedSiwfSignedRequest: string,
@@ -33,6 +34,9 @@ export async function startSiwf(
   signUpEmail?: string,
   msaCreationCallbackFn?: MsaCreationCallbackFn,
 ): Promise<GatewaySiwfResponse> {
+  if (!isHexString(accountId))
+    throw new Error("accountId did not receive a 0x prefixed Ethereum Address");
+
   const decodedSiwfSignedRequest = decodeSignedRequest(
     encodedSiwfSignedRequest,
   );
@@ -67,6 +71,7 @@ export async function startSiwf(
       providerAccount,
       chainInfo,
       signUpHandle,
+      signUpEmail,
       msaCreationCallbackFn,
     );
   } else {
@@ -90,7 +95,7 @@ export async function startSiwf(
  */
 export async function getAccountForAccountId(
   gatewayFetchFn: GatewayFetchFn,
-  accountId: string,
+  accountId: Address | string,
 ): Promise<AccountResponse | null> {
   const response = await gatewayFetchFn(
     "GET",

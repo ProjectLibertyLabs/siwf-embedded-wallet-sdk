@@ -12,10 +12,15 @@ import {
   mockReturningUserAccountResponse,
   mockAccountId,
 } from "../test-mocks/consts";
-import { decodeSignedRequest } from "@projectlibertylabs/siwf";
+import {
+  decodeSignedRequest,
+  SiwfResponseCredentialGraph,
+} from "@projectlibertylabs/siwf";
 import { AccountResponse } from "./types/response-types";
 import { GatewayFetchFn } from "./types/param-types";
 import { GatewayFetchError } from "./types/error-types";
+import { CAIP122, EIP712 } from "./types/signed-document-types";
+import { stripAddress } from "./helpers/utils";
 
 const providerControlKey = decodeSignedRequest(mockProviderEncodedRequest)
   .requestedSignatures.publicKey.encodedValue;
@@ -120,11 +125,42 @@ describe("Basic startSiwf test", () => {
 
     expect(resp.controlKey).toEqual(mockAccountId);
     expect(resp.msaId).toEqual(mockNewUserGatewaySiwfResponse.msaId);
-    expect(resp).toMatchSnapshot();
+    expect(resp.email).toEqual("john.doe@example.com");
+    expect(resp.signUpStatus).toEqual("waiting");
+
+    expect(resp.graphKey).toMatchObject({
+      encoding: "base16",
+      format: "bare",
+      type: "X25519",
+      keyType: "dsnp.public-key-key-agreement",
+    });
+
+    expect(typeof resp.graphKey!.encodedPublicKeyValue).toBe("string");
+    expect(typeof resp.graphKey!.encodedPrivateKeyValue).toBe("string");
+    expect(resp.graphKey!.id).toMatch(/^did:ethr:/);
+
+    // Validate rawCredentials[0] structure
+    const credential = resp.rawCredentials![0] as SiwfResponseCredentialGraph;
+    expect(credential).toMatchObject({
+      type: ["VerifiedGraphKeyCredential", "VerifiableCredential"],
+      credentialSchema: {
+        type: "JsonSchema",
+        id: expect.stringContaining("https://schemas.frequencyaccess.com"),
+      },
+      credentialSubject: expect.objectContaining({
+        encoding: "base16",
+        format: "bare",
+        type: "X25519",
+        keyType: "dsnp.public-key-key-agreement",
+      }),
+    });
+
+    expect(credential.issuer).toEqual(credential.credentialSubject.id);
+    expect(() => new Date(credential.validFrom!)).not.toThrow();
   });
 
   it("Can sign up without a graph key", async () => {
-    const payloadsToSign: any[] = []; // TODO: Use correct type when CAIP122 is exported
+    const payloadsToSign: (CAIP122 | EIP712)[] = [];
     const resp = await startSiwf(
       mockAccountId,
       async (payload) => {
@@ -236,5 +272,27 @@ describe("getAccountForAccountId", () => {
       expect(err).toBeInstanceOf(GatewayFetchError);
       expect((err as GatewayFetchError).response.status).toBe(500);
     }
+  });
+
+  it("throws when accountId is not an ethereum address", async () => {
+    await expect(
+      startSiwf(
+        stripAddress(mockAccountId),
+        async () => "0xdef0",
+        mockGatewayFetchFactory(
+          mockNewUserAccountResponse,
+          mockProviderAccountResponse,
+          mockNewUserGatewaySiwfResponse,
+          mockChainInfoResponse,
+          providerControlKey,
+        ),
+        mockProviderEncodedRequest,
+        "JohnDoe",
+        "john.doe@example.com",
+        () => {},
+      ),
+    ).rejects.toThrow(
+      "accountId did not receive a 0x prefixed Ethereum Address",
+    );
   });
 });

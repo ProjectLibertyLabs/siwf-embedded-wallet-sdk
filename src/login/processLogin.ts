@@ -1,4 +1,4 @@
-import { GatewayFetchFn, SignatureFn } from "../types/param-types";
+import { Address, GatewayFetchFn, SignatureFn } from "../types/param-types";
 import {
   ChainInfoResponse,
   GatewaySiwfResponse,
@@ -6,13 +6,13 @@ import {
 import {
   createLoginSiwfResponse,
   CreateLoginSiwfResponseArguments,
-} from "./siwf";
+} from "../helpers/siwf";
 import { v4 as generateRandomUuid } from "uuid";
-import { postGatewaySiwf } from "./gateway";
-import { convertSS58AddressToEthereum } from "./utils";
+import { postGatewaySiwf } from "../helpers/gateway";
+import { convertSS58AddressToEthereum } from "../helpers/utils";
 
 export async function processLogin(
-  accountId: string,
+  accountId: Address,
   signatureFn: SignatureFn,
   gatewayFetchFn: GatewayFetchFn,
   callBackUri: string,

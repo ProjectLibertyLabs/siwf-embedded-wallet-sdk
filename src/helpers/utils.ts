@@ -3,6 +3,7 @@ import { u8aToHex } from "@polkadot/util";
 import { addressToEvm } from "@polkadot/util-crypto";
 import { SiwfSignedRequest, SiwfPublicKey } from "@projectlibertylabs/siwf";
 import { keccak_256 } from "@noble/hashes/sha3";
+import { Address } from "../types/param-types";
 
 /**
  * Validate that a string is a valid hex string
@@ -29,7 +30,7 @@ export function convertSS58AddressToEthereum<T extends { controlKey: string }>(
   };
 }
 
-export function accountIdToPublicKey(accountId: string): SiwfPublicKey {
+export function accountIdToPublicKey(accountId: Address): SiwfPublicKey {
   return {
     encodedValue: toChecksumAddress(accountId),
     encoding: "base16",
@@ -63,7 +64,7 @@ export function requestContainsCredentialType(
   });
 }
 
-function stripAddress(address: string) {
+export function stripAddress(address: string) {
   return (
     address.slice(0, 2) === "0x" ? address.slice(2) : address
   ).toLowerCase();
@@ -80,7 +81,7 @@ export function toChecksumAddress(
   }
   const strippedAddress = stripAddress(address);
 
-  const prefix = chainId != null ? chainId.toString() + "0x" : "";
+  const prefix = chainId !== null ? chainId.toString() + "0x" : "";
   const keccakHash = stripAddress(
     u8aToHex(keccak_256(prefix + strippedAddress)),
   );

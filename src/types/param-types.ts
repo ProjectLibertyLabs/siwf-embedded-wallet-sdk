@@ -4,7 +4,7 @@ import { CAIP122, EIP712 } from "./signed-document-types";
 //
 // accountId param
 //
-export type Address = string;
+export type Address = `0x${string}`;
 
 //
 // signatureFn param
@@ -22,7 +22,7 @@ interface GatewayFetchBody {
 export type GatewayFetchFn = (
   method: "GET" | "POST",
   path:
-    | `/v1/accounts/account/${Address}`
+    | `/v1/accounts/account/${string}`
     | "/v2/accounts/siwf"
     | "/v1/frequency/blockinfo",
   body?: GatewayFetchBody,

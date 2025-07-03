@@ -5,15 +5,11 @@ import {
   createSignedGraphKeyPayload,
 } from "./payloads";
 import {
-  SiwfResponse,
   SiwfResponsePayloadAddProvider,
   SiwfResponsePayloadClaimHandle,
+  SiwfResponsePayloadItemActions,
 } from "@projectlibertylabs/siwf";
 import { TEST_SIGNATURE_FN } from "../../test-mocks/test-signature-fn.js";
-import {
-  createLoginSiwfResponse,
-  CreateLoginSiwfResponseArguments,
-} from "./siwf";
 
 describe("createSignedAddProviderPayload", () => {
   it("returns the correct payload", async () => {
@@ -67,27 +63,25 @@ describe("createSignedGraphKeyPayload", () => {
 
     expect(payload).toMatchSnapshot();
   });
-});
 
-describe("createSignedLogInPayload", () => {
-  it("returns the correct payload", async () => {
+  it("throws when payloadHex is not valid", async () => {
     const accountId = "0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac";
     const signatureFn = TEST_SIGNATURE_FN;
-    const mockLoginPayloadArguments: CreateLoginSiwfResponseArguments = {
-      domain: "your-app.com",
-      uri: "https://your-app.com/signin/callback",
-      version: "1",
-      nonce: "N6rLwqyz34oUxJEXJ",
-      chainId: "123",
-      issuedAt: "2024-10-29T19:17:27.077Z",
+
+    const payloadArguments: SiwfResponsePayloadItemActions["payload"] = {
+      schemaId: 7,
+      targetHash: 0,
+      expiration: 100,
+      actions: [
+        {
+          type: "addItem",
+          payloadHex: "123",
+        },
+      ],
     };
 
-    const payload: SiwfResponse = await createLoginSiwfResponse(
-      accountId,
-      signatureFn,
-      mockLoginPayloadArguments,
-    );
-
-    expect(payload).toMatchSnapshot();
+    await expect(
+      createSignedGraphKeyPayload(accountId, signatureFn, payloadArguments),
+    ).rejects.toThrow("Expected HexString: 123");
   });
 });

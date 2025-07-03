@@ -4,10 +4,12 @@ import {
   requestContainsCredentialType,
   accountIdToPublicKey,
   toChecksumAddress,
+  stripAddress,
 } from "./utils";
 import { SiwfSignedRequest } from "@projectlibertylabs/siwf";
 import { mockAccountId } from "../../test-mocks/consts";
 import { u8aToHex } from "@polkadot/util";
+import bs58 from "bs58";
 
 describe("convertSS58AddressToEthereum", () => {
   it("succeeds", async () => {
@@ -153,8 +155,13 @@ describe("requestContainsCredentialType", () => {
 });
 
 describe("toChecksumAddress", () => {
-  it("If already formatted correctly, should return the same string back", () => {
-    const result = toChecksumAddress(mockAccountId);
+  it("If already formatted correctly and given a chain id, should return the chain id + account id", () => {
+    const result = toChecksumAddress(mockAccountId, "123");
+    // todo: confirm this is the expected value
+    expect(result).toStrictEqual(`0xf24ff3a9cf04c71dBc94d0B566F7a27B94566cAc`);
+  });
+  it("returns just account id if a null chain id is given", () => {
+    const result = toChecksumAddress(mockAccountId, null);
     expect(result).toStrictEqual(mockAccountId);
   });
   it("If formatted incorrectly, should convert to checksum", () => {
@@ -164,5 +171,19 @@ describe("toChecksumAddress", () => {
     ]);
     const result = toChecksumAddress(u8aToHex(mockAccountIdAsUInt8Array));
     expect(result).toStrictEqual(mockAccountId);
+  });
+  it("throws error if invalid address", () => {
+    expect(() => toChecksumAddress("0x1234")).toThrow(
+      'Given address "0x1234" is not a valid Ethereum address.',
+    );
+  });
+});
+
+describe("stripAddress", () => {
+  it("removes '0x' prefix and lowercases the address", () => {
+    expect(stripAddress("0xAbC123")).toBe("abc123");
+  });
+  it("returns the address lowercased if no '0x' prefix", () => {
+    expect(stripAddress("AbC123")).toBe("abc123");
   });
 });

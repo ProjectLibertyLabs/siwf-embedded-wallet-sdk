@@ -196,10 +196,13 @@ it("gets a correctly parses encoded signed requests, then gets provider account"
     return new Response(JSON.stringify(body), { status: 200 });
   };
 
-  const address = requestedSignatures.publicKey.encodedValue;
+  const providerAddress = requestedSignatures.publicKey.encodedValue;
 
   try {
-    const providerAccount = await getAccountForAccountId(fetchFn, address);
+    const providerAccount = await getAccountForAccountId(
+      fetchFn,
+      providerAddress,
+    );
     expect(providerAccount).toEqual(body);
   } catch (err) {
     expect(err).toBeInstanceOf(GatewayFetchError);

@@ -46,10 +46,11 @@
     "@rollup/rollup-linux-x64-gnu": "^4.44.1"
   },
   "dependencies": {
-    "@frequency-chain/ethereum-utils": "1.17.0",
+    "@frequency-chain/ethereum-utils": "1.17.2",
+    "@frequency-chain/recovery-sdk": "1.17.2",
     "@noble/hashes": "^1.8.0",
     "@polkadot/util": "13.5.3",
-    "@projectlibertylabs/siwf": "2.3.1",
+    "@projectlibertylabs/siwf": "2.3.2",
     "tweetnacl": "^1.0.3",
     "uuid": "^11.1.0"
   }
