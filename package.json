@@ -48,7 +48,7 @@
     "@frequency-chain/ethereum-utils": "1.17.0",
     "@noble/hashes": "^1.8.0",
     "@polkadot/util": "13.5.3",
-    "@projectlibertylabs/siwf": "2.3.0",
+    "@projectlibertylabs/siwf": "2.3.1",
     "tweetnacl": "^1.0.3",
     "uuid": "^11.1.0"
   }
