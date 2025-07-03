@@ -2,7 +2,9 @@ import {
   getEip712BrowserRequestAddProvider,
   getEip712BrowserRequestClaimHandlePayload,
   getEip712BrowserRequestItemizedSignaturePayloadV2,
+  getEip712BrowserRequestRecoveryCommitmentPayload,
   ItemizedAction,
+  RecoveryCommitmentPayload,
 } from "@frequency-chain/ethereum-utils";
 import { SignatureFn } from "../types/param-types";
 import { EIP712Document } from "../types/signed-document-types";
@@ -109,6 +111,35 @@ export async function createSignedGraphKeyPayload(
       extrinsic: "applyItemActionsWithSignatureV2",
     },
     type: "itemActions",
+    payload: payloadArguments,
+  };
+}
+
+export async function createRecoverySecretPayload(
+  accountId: string,
+  signatureFn: SignatureFn,
+  payloadArguments: RecoveryCommitmentPayload, //TODO: use siwf type when implemented
+) {
+  // TODO: set return value to siwf type when implemented
+  const addRecoverySecretEip712 =
+    getEip712BrowserRequestRecoveryCommitmentPayload(
+      payloadArguments.recoveryCommitment,
+      payloadArguments.expiration,
+    ) as EIP712Document;
+  const encodedValue = await signatureFn({
+    method: "eth_signTypedData_v4",
+    params: [accountId, addRecoverySecretEip712],
+  });
+
+  const signature = encodedValueToSignature(encodedValue);
+
+  return {
+    signature,
+    endpoint: {
+      pallet: "msa",
+      extrinsic: "addRecoveryCommitment",
+    },
+    type: "addRecoveryCommitment",
     payload: payloadArguments,
   };
 }

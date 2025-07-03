@@ -15,6 +15,7 @@ import {
   GatewaySiwfResponse,
 } from "../types/response-types";
 import {
+  createRecoverySecretPayload,
   createSignedAddProviderPayload,
   createSignedClaimHandlePayload,
   createSignedGraphKeyPayload,
@@ -26,6 +27,16 @@ import {
 import { createSignInSiwfResponse } from "./siwf";
 import { pollForAccount, postGatewaySiwf } from "./gateway";
 import { generateGraphKeyPair } from "./crypto";
+import {
+  ContactType,
+  generateRecoverySecret,
+  getRecoveryCommitment,
+} from "@frequency-chain/recovery-sdk";
+import {
+  createRecoveryCommitmentPayload,
+  HexString,
+  RecoveryCommitmentPayload,
+} from "@frequency-chain/ethereum-utils";
 
 const PAYLOAD_EXPIRATION_DELTA = 90; // Matches frequency access config
 
@@ -64,6 +75,7 @@ export async function processSignUp(
   providerAccount: AccountResponse,
   chainInfo: ChainInfoResponse,
   signUpHandle: string,
+  signUpEmail: string,
   msaCreationCallbackFn?: MsaCreationCallbackFn,
 ): Promise<GatewaySiwfResponse> {
   // Determine expiration
@@ -109,10 +121,28 @@ export async function processSignUp(
   }
 
   // Sign Recovery Key
-  // const _ignoreForMockSetRecoveryHashSignature = await signatureFn({
-  //   method: "eth_signTypedData_v4",
-  //   params: [accountId, addRecoveryHash712],
-  // });
+  if (signUpEmail) {
+    const secret = generateRecoverySecret();
+    const recoveryCommitment = getRecoveryCommitment(
+      secret,
+      ContactType.EMAIL,
+      signUpEmail,
+    );
+
+    const recoveryPayloadArguments: RecoveryCommitmentPayload = {
+      type: "RecoveryCommitmentPayload",
+      recoveryCommitment,
+      expiration,
+    };
+
+    optionalPayloads.push(
+      await createRecoverySecretPayload(
+        accountId,
+        signatureFn,
+        recoveryPayloadArguments,
+      ),
+    );
+  }
 
   const payloads: SiwfResponsePayload[] = optionalPayloads.concat([
     addProviderPayload,

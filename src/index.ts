@@ -67,6 +67,7 @@ export async function startSiwf(
       providerAccount,
       chainInfo,
       signUpHandle,
+      signUpEmail,
       msaCreationCallbackFn,
     );
   } else {
