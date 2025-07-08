@@ -46,7 +46,7 @@
     "@rollup/rollup-linux-x64-gnu": "^4.44.1"
   },
   "dependencies": {
-    "@frequency-chain/ethereum-utils": "1.17.0",
+    "@frequency-chain/ethereum-utils": "1.17.1",
     "@noble/hashes": "^1.8.0",
     "@polkadot/util": "13.5.3",
     "@projectlibertylabs/siwf": "2.3.1",
