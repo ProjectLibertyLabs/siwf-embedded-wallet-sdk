@@ -4,7 +4,7 @@ import {
   GatewaySiwfResponse,
 } from "../types/response-types";
 import { GatewayFetchError } from "../types/error-types";
-import { stringToBase64URL } from "src/helpers/base64url";
+import { stringToBase64URL } from "./base64url";
 import { getAccountForAccountId } from "../index";
 import { SiwfResponse } from "@projectlibertylabs/siwf";
 
