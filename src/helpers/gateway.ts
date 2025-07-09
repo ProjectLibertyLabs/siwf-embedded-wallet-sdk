@@ -1,4 +1,8 @@
-import { GatewayFetchFn, MsaCreationCallbackFn } from "../types/param-types";
+import {
+  Address,
+  GatewayFetchFn,
+  MsaCreationCallbackFn,
+} from "../types/param-types";
 import {
   ChainInfoResponse,
   GatewaySiwfResponse,
@@ -73,7 +77,7 @@ export async function poll<T>(
 
 export async function pollForAccount(
   gatewayFetchFn: GatewayFetchFn,
-  accountId: string,
+  accountId: Address,
   msaCreationCallbackFn: MsaCreationCallbackFn,
   requestDelaySeconds: number = 5,
   timeoutSeconds: number = 600, // 10 minutes

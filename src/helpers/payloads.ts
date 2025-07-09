@@ -2,9 +2,11 @@ import {
   getEip712BrowserRequestAddProvider,
   getEip712BrowserRequestClaimHandlePayload,
   getEip712BrowserRequestItemizedSignaturePayloadV2,
+  getEip712BrowserRequestRecoveryCommitmentPayload,
+  HexString,
   ItemizedAction,
 } from "@frequency-chain/ethereum-utils";
-import { SignatureFn } from "../types/param-types";
+import { Address, SignatureFn } from "../types/param-types";
 import { EIP712Document } from "../types/signed-document-types";
 import {
   SiwfResponsePayloadAddProvider,
@@ -12,9 +14,12 @@ import {
   SiwfResponsePayloadItemActions,
 } from "@projectlibertylabs/siwf";
 import { encodedValueToSignature, isHexString } from "./utils";
+import { SiwfResponsePayloadRecoveryCommitment } from "@projectlibertylabs/siwf/types/payload";
+import { SiwfResponseCredentialRecoverySecret } from "@projectlibertylabs/siwf/types/credential";
+import { generateRecoverySecretCredential } from "./crypto";
 
 export async function createSignedAddProviderPayload(
-  accountId: string,
+  accountId: Address,
   signatureFn: SignatureFn,
   payloadArguments: SiwfResponsePayloadAddProvider["payload"],
   extrinsic:
@@ -45,7 +50,7 @@ export async function createSignedAddProviderPayload(
 }
 
 export async function createSignedClaimHandlePayload(
-  accountId: string,
+  accountId: Address,
   signatureFn: SignatureFn,
   payloadArguments: SiwfResponsePayloadClaimHandle["payload"],
 ): Promise<SiwfResponsePayloadClaimHandle> {
@@ -72,7 +77,7 @@ export async function createSignedClaimHandlePayload(
 }
 
 export async function createSignedGraphKeyPayload(
-  accountId: string,
+  accountId: Address,
   signatureFn: SignatureFn,
   payloadArguments: SiwfResponsePayloadItemActions["payload"],
 ): Promise<SiwfResponsePayloadItemActions> {
@@ -110,5 +115,44 @@ export async function createSignedGraphKeyPayload(
     },
     type: "itemActions",
     payload: payloadArguments,
+  };
+}
+
+export async function createRecoverySecretPayloadAndCredential(
+  accountId: Address,
+  recoverySecret: string,
+  signatureFn: SignatureFn,
+  payloadArguments: SiwfResponsePayloadRecoveryCommitment["payload"],
+): Promise<{
+  recoverySecretCredential: SiwfResponseCredentialRecoverySecret;
+  recoverySecretPayload: SiwfResponsePayloadRecoveryCommitment;
+}> {
+  const addRecoverySecretEip712 =
+    getEip712BrowserRequestRecoveryCommitmentPayload(
+      payloadArguments.recoveryCommitmentHex as HexString,
+      payloadArguments.expiration,
+    ) as EIP712Document;
+
+  const encodedValue = await signatureFn({
+    method: "eth_signTypedData_v4",
+    params: [accountId, addRecoverySecretEip712],
+  });
+
+  const signature = encodedValueToSignature(encodedValue);
+
+  return {
+    recoverySecretCredential: generateRecoverySecretCredential(
+      accountId,
+      recoverySecret,
+    ),
+    recoverySecretPayload: {
+      signature,
+      endpoint: {
+        pallet: "msa",
+        extrinsic: "addRecoveryCommitment",
+      },
+      type: "recoveryCommitment",
+      payload: payloadArguments,
+    },
   };
 }
