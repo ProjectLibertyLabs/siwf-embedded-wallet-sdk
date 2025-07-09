@@ -1,6 +1,9 @@
 # SIWF Embedded Wallet SDK
 
 ![NPM Version](https://img.shields.io/npm/v/%40projectlibertylabs%2Fsiwf-embedded-wallet-sdk)
+
+> This SDK only supports **Ethereum embedded wallets (secp256k1)**.
+
 ## Overview
 
 `startSiwf(...)`:
@@ -47,11 +50,11 @@ const startSiwfResponse = await startSiwf(
 ## `startSiwf` Parameters
 
 | Parameter             | Type                    | Required | Description                                                                            |
-| --------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------- |
-| `accountId`           | `string`                | ✅       | The wallet address of the user                                                         |
-| `signatureFn`         | `SignatureFn`           | ✅       | Connects your embedded wallet to the SDK (see below)                                   |
-| `gatewayFetchFn`      | `GatewayFetchFn`        | ✅       | Connects the SDK to your instance of the Frequency Gateway Account Service (see below) |
-| `siwfSignedRequest`   | `string`                | ✅       | Encoded SIWF signed request string                                                     |
+| --------------------- |-------------------------|----------|----------------------------------------------------------------------------------------|
+| `accountId`           | `Account or string`     | ✅       | The Ethereum wallet address of the user                                                |
+| `signatureFn`         | `SignatureFn`           | ✅        | Connects your embedded wallet to the SDK (see below)                                   |
+| `gatewayFetchFn`      | `GatewayFetchFn`        | ✅        | Connects the SDK to your instance of the Frequency Gateway Account Service (see below) |
+| `siwfSignedRequest`   | `string`                | ✅        | Encoded SIWF signed request string                                                     |
 | `userHandle`          | `string`                | ❄️       | (New Users Only) Handle to register                                                    |
 | `email`               | `string`                | ❄️       | (New Users Only) User's email for recovery setup                                       |
 | `msaCreationCallback` | `MsaCreationCallbackFn` | ❄️       | Callback for when the MSA Id is claimed (see below)                                    |
@@ -73,10 +76,10 @@ export interface GatewaySiwfResponse {
 
 ## `getAccountForAccountId` Parameters
 
-| Parameter             | Type                    | Required | Description                                                                            |
-| --------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------- |
-| `gatewayFetchFn`      | `GatewayFetchFn`        | ✅       | Connects the SDK to your instance of the Frequency Gateway Account Service (see below) |
-| `accountId`           | `string`                | ✅       | The wallet address of the user                                                         |
+| Parameter             | Type                | Required | Description                                                                           |
+| --------------------- |---------------------| -------- |---------------------------------------------------------------------------------------|
+| `gatewayFetchFn`      | `GatewayFetchFn`    | ✅       | Connects the SDK to your instance of the Frequency Gateway Account Service (see below) |
+| `accountId`           | `Account or string` | ✅       | The wallet address of the user                                                        |
 
 ### Return Value
 ```ts
