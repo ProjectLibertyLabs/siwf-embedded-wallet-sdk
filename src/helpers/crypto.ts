@@ -1,11 +1,11 @@
 import * as nacl from "tweetnacl";
 import { HexString } from "@frequency-chain/ethereum-utils";
 import { u8aToHex } from "@polkadot/util";
-import {
+import type {
   SiwfResponseCredentialGraph,
   SiwfResponseCredentialRecoverySecret,
-  VerifiedRecoverySecret,
 } from "@projectlibertylabs/siwf";
+import { VerifiedRecoverySecret } from "@projectlibertylabs/siwf/constants";
 import { Address } from "../types/param-types";
 
 export function generateGraphKeyCredential(

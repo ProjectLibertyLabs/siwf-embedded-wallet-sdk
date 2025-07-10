@@ -1,5 +1,5 @@
 import { AccountResponse, GatewaySiwfResponse } from "./types/response-types";
-import { decodeSignedRequest } from "@projectlibertylabs/siwf";
+import { decodeSignedRequest } from "@projectlibertylabs/siwf/request";
 import { getGatewayChainInfo } from "./helpers/gateway.js";
 import {
   Address,
